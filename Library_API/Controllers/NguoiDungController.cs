@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace Library_API.Controllers
 {
-    //[Authorize(Roles ="admin, user")]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class NguoiDungController : ControllerBase
@@ -46,7 +46,33 @@ namespace Library_API.Controllers
 
             return new JsonResult(table);
         }
+        [HttpGet("{id}")]
+        public JsonResult Get(int id)
+        {
+            string query = @"
+                    select * from
+                    dbo.NguoiDung
+                    where nd_Id = @Id
+                    ";
 
-    
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id); // Thêm tham số cho ID sách
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
     }
 }

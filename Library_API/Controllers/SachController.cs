@@ -142,27 +142,28 @@ namespace Library_API.Controllers
             }
         }
 
+    
         [HttpPut]
         public JsonResult Put(Sach s)
         {
             string query = @"
-                    UPDATE dbo.Sach
-                    SET s_TenSach = @s_TenSach,
-                        s_SoLuong= @s_SoLuong,
-                        s_MoTa=@s_MoTa,
-                        s_TrongLuong=@s_TrongLuong,
-                        s_NamXuatBan= @s_NamXuatBan,
-                        s_TrangThaiMuon=@s_TrangThaiMuon,
-                        s_ChiDoc=@s_ChiDoc,
-                        tg_Id=@tg_Id, 
-                        nxb_Id=@nxb_Id, 
-                        tl_Id=@tl_Id,
-                        ls_Id=@ls_Id, 
-                        ks_Id =@ks_Id,
-                        os_Id =@os_Id,
-                        s_HinhAnh= @s_HinhAnh
-                    WHERE s_Id = @s_Id
-                    ";
+            UPDATE dbo.Sach
+            SET s_TenSach = @s_TenSach,
+                s_SoLuong= @s_SoLuong,
+                s_MoTa=@s_MoTa,
+                s_TrongLuong=@s_TrongLuong,
+                s_NamXuatBan= @s_NamXuatBan,
+                s_TrangThaiMuon= CASE WHEN @s_SoLuong > 0 THEN 'true' ELSE s_TrangThaiMuon END,
+                s_ChiDoc=@s_ChiDoc,
+                tg_Id=@tg_Id, 
+                nxb_Id=@nxb_Id, 
+                tl_Id=@tl_Id,
+                ls_Id=@ls_Id, 
+                ks_Id =@ks_Id,
+                os_Id =@os_Id,
+                s_HinhAnh= @s_HinhAnh
+            WHERE s_Id = @s_Id
+            ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
@@ -197,6 +198,7 @@ namespace Library_API.Controllers
 
             return new JsonResult("Cập nhật thành công");
         }
+
 
 
 

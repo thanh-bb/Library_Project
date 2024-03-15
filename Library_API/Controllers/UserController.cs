@@ -18,7 +18,7 @@ namespace Library_API.Controllers
         private readonly JWTSetting _jwtSetting;
         private readonly IRefreshTokenGenerator _tokenGenerator;
 
-        public UserController(LibraryContext learnDb, IOptions<JWTSetting> options ,IRefreshTokenGenerator refreshTokenGenerator)
+        public UserController(LibraryContext learnDb, IOptions<JWTSetting> options, IRefreshTokenGenerator refreshTokenGenerator)
         {
             _context = learnDb;
             _jwtSetting = options.Value;
@@ -42,6 +42,7 @@ namespace Library_API.Controllers
         }
 
 
+
         [Route("Authenticate")]
         [HttpPost]
         public IActionResult Authenticate([FromBody] usercred user)
@@ -52,18 +53,20 @@ namespace Library_API.Controllers
             if (_user == null)
             {
                 return Unauthorized();
-
             }
+
+            var claims = new Claim[]
+            {
+        new Claim(ClaimTypes.Name, _user.NdUsername),
+        new Claim(ClaimTypes.Role, _user.QId),
+        new Claim(ClaimTypes.NameIdentifier, _user.NdId.ToString()) // Add Nd_Id claim here
+            };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(_jwtSetting.SecurityKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, _user.NdUsername),
-                    new Claim(ClaimTypes.Role, _user.QId)
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(20),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256)
             };
@@ -72,7 +75,6 @@ namespace Library_API.Controllers
 
             tokenResponse.JWTToken = finalToken;
             tokenResponse.RefreshToken = _tokenGenerator.GenerateToken(user.username);
-
 
             return Ok(tokenResponse);
         }
