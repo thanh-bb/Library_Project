@@ -25,7 +25,7 @@ namespace Library_API.Controllers
         public JsonResult Get()
         {
             string query = @"
-        SELECT pm.pm_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
                ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
                s.s_TenSach
         FROM dbo.PhieuMuon pm
@@ -48,7 +48,8 @@ namespace Library_API.Controllers
                     {
                         QuanLyPhieuMuon phieuMuon = new QuanLyPhieuMuon
                         {
-                            Id = Convert.ToInt32(myReader["pm_Id"]),
+                            Id_PhieuMuon = Convert.ToInt32(myReader["pm_Id"]),
+                            Id_User = Convert.ToInt32(myReader["nd_Id"]),
                             TenSach = myReader["s_TenSach"].ToString(),
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
@@ -71,7 +72,7 @@ namespace Library_API.Controllers
         public JsonResult Get(int ndId)
         {
             string query = @"
-        SELECT pm.pm_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
                ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
                s.s_TenSach
         FROM dbo.PhieuMuon pm
@@ -96,7 +97,9 @@ namespace Library_API.Controllers
                     {
                         QuanLyPhieuMuon phieuMuon = new QuanLyPhieuMuon
                         {
-                            Id = Convert.ToInt32(myReader["pm_Id"]),
+                            Id_PhieuMuon = Convert.ToInt32(myReader["pm_Id"]),
+                            Id_User = Convert.ToInt32(myReader["nd_Id"]),
+                            Id_Sach = Convert.ToInt32(myReader["s_Id"]),
                             TenSach = myReader["s_TenSach"].ToString(),
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
@@ -112,6 +115,57 @@ namespace Library_API.Controllers
 
             return new JsonResult(quanLyPhieuMuons);
         }
+
+
+
+        [HttpGet("ByPmId/{pmId}")]
+        public JsonResult GetByPmId(int pmId)
+        {
+            string query = @"
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+               ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
+               s.s_TenSach
+        FROM dbo.PhieuMuon pm
+        INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
+        INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
+        WHERE pm.pm_Id = @PmId
+    ";
+
+            List<QuanLyPhieuMuon> quanLyPhieuMuons = new List<QuanLyPhieuMuon>();
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@PmId", pmId);
+                    myCon.Open();
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+
+                    while (myReader.Read())
+                    {
+                        QuanLyPhieuMuon phieuMuon = new QuanLyPhieuMuon
+                        {
+                            Id_PhieuMuon = Convert.ToInt32(myReader["pm_Id"]),
+                            Id_User = Convert.ToInt32(myReader["nd_Id"]),
+                            Id_Sach = Convert.ToInt32(myReader["s_Id"]),
+                            TenSach = myReader["s_TenSach"].ToString(),
+                            SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
+                            NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
+                            HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
+                            TrangThai = myReader["pm_TrangThai"].ToString()
+                        };
+                        quanLyPhieuMuons.Add(phieuMuon);
+                    }
+
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult(quanLyPhieuMuons);
+        }
+
 
 
     }

@@ -52,8 +52,8 @@ namespace Library_API.Controllers
 
             string query = @"
             INSERT INTO dbo.PhieuTra
-            ( pt_NgayTra, nd_Id)
-            VALUES ( @pt_NgayTra, @nd_Id);
+            ( pt_NgayTra, nd_Id, pm_Id)
+            VALUES ( @pt_NgayTra, @nd_Id, @pm_Id);
             SELECT SCOPE_IDENTITY(); -- Lấy ID của phiếu trả mới thêm vào
             ";
 
@@ -68,7 +68,7 @@ namespace Library_API.Controllers
                     
                     myCommand.Parameters.AddWithValue("@pt_NgayTra", pt.PtNgayTra);                  
                     myCommand.Parameters.AddWithValue("@nd_Id", pt.NdId);
-
+                    myCommand.Parameters.AddWithValue("@pm_Id", pt.PmId);
                     // Thực hiện lấy ID của phiếu mượn mới thêm vào
                     newPtId = Convert.ToInt32(myCommand.ExecuteScalar());
                 }

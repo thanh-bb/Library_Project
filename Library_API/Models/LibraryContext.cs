@@ -33,6 +33,8 @@ public partial class LibraryContext : DbContext
 
     public virtual DbSet<Osach> Osaches { get; set; }
 
+    public virtual DbSet<PhieuDongPhat> PhieuDongPhats { get; set; }
+
     public virtual DbSet<PhieuMuon> PhieuMuons { get; set; }
 
     public virtual DbSet<PhieuTra> PhieuTras { get; set; }
@@ -48,10 +50,8 @@ public partial class LibraryContext : DbContext
     public virtual DbSet<TheLoai> TheLoais { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        //=> optionsBuilder.UseSqlServer("Server=DESKTOP-S6UJRMK\\SQLEXPRESS;Database=library;Trusted_Connection=True;Encrypt=False");
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-S6UJRMK\\SQLEXPRESS;Database=library;Trusted_Connection=True;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -154,7 +154,7 @@ public partial class LibraryContext : DbContext
 
             entity.HasOne(d => d.Gp).WithMany(p => p.LoaiSaches)
                 .HasForeignKey(d => d.GpId)
-                .HasConstraintName("FK__LoaiSach__gp_Id__45F365D3");
+                .HasConstraintName("FK__LoaiSach__gp_Id__71D1E811");
         });
 
         modelBuilder.Entity<NguoiDung>(entity =>
@@ -219,6 +219,25 @@ public partial class LibraryContext : DbContext
                 .HasColumnName("os_TenO");
         });
 
+        modelBuilder.Entity<PhieuDongPhat>(entity =>
+        {
+            entity.HasKey(e => e.PdpId).HasName("PK__PhieuDon__A65BF78EBB793F2C");
+
+            entity.ToTable("PhieuDongPhat");
+
+            entity.Property(e => e.PdpId).HasColumnName("pdp_Id");
+            entity.Property(e => e.PdpNgayDong)
+                .HasColumnType("datetime")
+                .HasColumnName("pdp_NgayDong");
+            entity.Property(e => e.PdpTongTienPhat).HasColumnName("pdp_TongTienPhat");
+            entity.Property(e => e.PdpTrangThaiDong).HasColumnName("pdp_TrangThaiDong");
+            entity.Property(e => e.PmId).HasColumnName("pm_Id");
+
+            entity.HasOne(d => d.Pm).WithMany(p => p.PhieuDongPhats)
+                .HasForeignKey(d => d.PmId)
+                .HasConstraintName("FK__PhieuDong__pm_Id__17F790F9");
+        });
+
         modelBuilder.Entity<PhieuMuon>(entity =>
         {
             entity.HasKey(e => e.PmId).HasName("PK__PhieuMuo__26B01F6E9D99D6A2");
@@ -234,7 +253,7 @@ public partial class LibraryContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("pm_NgayMuon");
             entity.Property(e => e.PmTrangThai)
-                .HasMaxLength(1)
+                .HasMaxLength(150)
                 .HasColumnName("pm_TrangThai");
 
             entity.HasOne(d => d.Nd).WithMany(p => p.PhieuMuons)
@@ -250,6 +269,7 @@ public partial class LibraryContext : DbContext
 
             entity.Property(e => e.PtId).HasColumnName("pt_Id");
             entity.Property(e => e.NdId).HasColumnName("nd_Id");
+            entity.Property(e => e.PmId).HasColumnName("pm_Id");
             entity.Property(e => e.PtNgayTra)
                 .HasColumnType("datetime")
                 .HasColumnName("pt_NgayTra");
@@ -257,6 +277,10 @@ public partial class LibraryContext : DbContext
             entity.HasOne(d => d.Nd).WithMany(p => p.PhieuTras)
                 .HasForeignKey(d => d.NdId)
                 .HasConstraintName("FK__PhieuTra__nd_Id__4E88ABD4");
+
+            entity.HasOne(d => d.Pm).WithMany(p => p.PhieuTras)
+                .HasForeignKey(d => d.PmId)
+                .HasConstraintName("FK_PhieuTra_PhieuMuon");
         });
 
         modelBuilder.Entity<Quyen>(entity =>

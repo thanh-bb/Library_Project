@@ -18,4 +18,8 @@ public partial class PhieuMuon
     public virtual ICollection<ChiTietPhieuMuon>? ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
 
     public virtual NguoiDung? Nd { get; set; }
+
+    public virtual ICollection<PhieuDongPhat> PhieuDongPhats { get; set; } = new List<PhieuDongPhat>();
+
+    public virtual ICollection<PhieuTra> PhieuTras { get; set; } = new List<PhieuTra>();
 }

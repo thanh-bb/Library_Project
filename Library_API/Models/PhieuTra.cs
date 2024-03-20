@@ -11,7 +11,11 @@ public partial class PhieuTra
 
     public int? NdId { get; set; }
 
+    public int? PmId { get; set; }
+
     public virtual ICollection<ChiTietPhieuTra>? ChiTietPhieuTras { get; set; } = new List<ChiTietPhieuTra>();
 
     public virtual NguoiDung? Nd { get; set; }
+
+    public virtual PhieuMuon? Pm { get; set; }
 }

@@ -203,7 +203,36 @@ namespace Library_API.Controllers
             return new JsonResult("Cập nhật trạng thái phiếu mượn thành công");
         }
 
-       
+
+
+
+        [HttpPost("CapNhatTrangThai")]
+        public JsonResult CapNhatTrangThai()
+        {
+            string query = @"
+        UPDATE dbo.PhieuMuon
+        SET pm_TrangThai = 
+            CASE
+                WHEN pm_TrangThai = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1 THEN 'Quá hạn trả'
+                ELSE pm_TrangThai
+            END
+        WHERE pm_TrangThai = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1
+    ";
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCon.Open();
+                    myCommand.ExecuteNonQuery();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult("Cập nhật trạng thái phiếu mượn thành công");
+        }
+
 
     }
 

@@ -7,7 +7,7 @@ public partial class ChiTietPhieuMuon
 {
     public int SId { get; set; }
 
-    public int? PmId { get; set; }
+    public int PmId { get; set; }
 
     public int? CtpmSoLuongSachMuon { get; set; }
 

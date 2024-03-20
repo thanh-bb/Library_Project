@@ -77,9 +77,10 @@ namespace ExcelToDatabase.Controllers
                                 }
 
                                 NguoiDung nd = new NguoiDung();
-                                nd.NdUsername = reader.GetValue(1).ToString();
-                                nd.NdPassword = reader.GetValue(2).ToString();
-                                nd.NdHoTen = reader.GetValue(3).ToString();
+                                nd.NdUsername = reader.GetValue(1)?.ToString() ?? string.Empty;
+                                nd.NdPassword = reader.GetValue(2)?.ToString() ?? string.Empty;
+                                nd.NdHoTen = reader.GetValue(3)?.ToString() ?? string.Empty;
+
 
                                 if (!reader.IsDBNull(4))
                                 {

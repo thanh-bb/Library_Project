@@ -6,6 +6,7 @@ using Library_API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Authentication.Models;
+using Library_API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,8 @@ var dbContext = builder.Services.BuildServiceProvider().GetService<LibraryContex
 // Refresh Token
 builder.Services.AddSingleton<IRefreshTokenGenerator>(provider => new RefreshTokenGenerator(dbContext));
 
+
+builder.Services.AddHostedService<PhieuMuonWorker>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
