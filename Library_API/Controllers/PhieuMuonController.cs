@@ -49,6 +49,36 @@ namespace Library_API.Controllers
             return new JsonResult(table);
         }
 
+
+        [HttpGet("{id}")]
+        public JsonResult Get(int id)
+        {
+
+            string query = @"
+                            select * from
+                            dbo.PhieuMuon
+                            where nd_Id= @Id
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
         [HttpPost]
         public JsonResult Post(PhieuMuon pm)
         {
@@ -173,65 +203,7 @@ namespace Library_API.Controllers
             return new JsonResult("Cập nhật trạng thái phiếu mượn thành công");
         }
 
-        [HttpPost("approve")]
-        public IActionResult Approve(PhieuMuon pm)
-        {
-            // Kiểm tra xem pm có trạng thái "Đã trả" không
-            if (pm.PmTrangThai != "Đã trả")
-            {
-                return BadRequest("Phiếu mượn chưa được trả");
-            }
-
-            // Tạo mới Phiếu Trả
-            PhieuTra pt = new PhieuTra
-            {
-                PtNgayTra = DateTime.Now, // Ngày trả là ngày hiện tại
-                NdId = pm.NdId // Người dùng trả sách
-            };
-
-            // Thêm Phiếu Trả vào cơ sở dữ liệu
-            // Lưu lại ID của Phiếu Trả mới được tạo
-            int newPtId;
-            string insertPtQuery = @"
-        INSERT INTO dbo.PhieuTra (pt_NgayTra, nd_Id)
-        VALUES (@pt_NgayTra, @nd_Id);
-        SELECT SCOPE_IDENTITY(); -- Lấy ID của phiếu trả mới thêm vào
-    ";
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("MyConnection")))
-            {
-                myCon.Open();
-                using (SqlCommand insertPtCommand = new SqlCommand(insertPtQuery, myCon))
-                {
-                    insertPtCommand.Parameters.AddWithValue("@pt_NgayTra", pt.PtNgayTra);
-                    insertPtCommand.Parameters.AddWithValue("@nd_Id", pt.NdId);
-                    newPtId = Convert.ToInt32(insertPtCommand.ExecuteScalar());
-                }
-
-                // Tạo chi tiết phiếu trả cho mỗi sách được mượn trong phiếu mượn đã được duyệt
-                foreach (var chiTiet in pm.ChiTietPhieuMuons)
-                {
-                    string insertCtPtQuery = @"
-                INSERT INTO dbo.ChiTietPhieuTra (pt_Id, s_Id, ctpt_SoLuongSachTra)
-                VALUES (@pt_Id, @s_Id, @ctpt_SoLuongSachTra);
-            ";
-                    using (SqlCommand insertCtPtCommand = new SqlCommand(insertCtPtQuery, myCon))
-                    {
-                        insertCtPtCommand.Parameters.AddWithValue("@pt_Id", newPtId); // Sử dụng ID mới của phiếu trả
-                        insertCtPtCommand.Parameters.AddWithValue("@s_Id", chiTiet.SId);
-                        insertCtPtCommand.Parameters.AddWithValue("@ctpt_SoLuongSachTra", chiTiet.CtpmSoLuongSachMuon); // Số lượng sách trả sẽ giống với số lượng sách mượn
-                        insertCtPtCommand.ExecuteNonQuery();
-                    }
-
-                    // Cập nhật số lượng sách trong kho nếu cần thiết
-                    // Và cập nhật trạng thái mượn của sách
-                    // Các bước này tương tự như bạn đã thực hiện trong phương thức POST của PhieuMuonController
-                }
-
-                myCon.Close();
-            }
-
-            return Ok("Đã tạo phiếu trả thành công");
-        }
+       
 
     }
 
