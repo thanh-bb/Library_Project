@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class GiaPhat
 {
@@ -11,5 +11,5 @@ public partial class GiaPhat
 
     public double? GpTienPhat { get; set; }
 
-    public virtual ICollection<LoaiSach>? LoaiSaches { get; set; } = new List<LoaiSach>();
+    public virtual ICollection<LoaiSach> LoaiSaches { get; set; } = new List<LoaiSach>();
 }

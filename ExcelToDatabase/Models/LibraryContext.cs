@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class LibraryContext : DbContext
 {
@@ -168,9 +168,6 @@ public partial class LibraryContext : DbContext
             entity.Property(e => e.NdDiaChi)
                 .HasMaxLength(200)
                 .HasColumnName("nd_DiaChi");
-            entity.Property(e => e.NdEmail)
-                .HasMaxLength(100)
-                .HasColumnName("nd_Email");
             entity.Property(e => e.NdGioiTinh)
                 .HasMaxLength(10)
                 .HasColumnName("nd_GioiTinh");

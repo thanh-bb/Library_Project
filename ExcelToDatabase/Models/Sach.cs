@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class Sach
 {
@@ -35,9 +35,9 @@ public partial class Sach
 
     public string? SHinhAnh { get; set; }
 
-    public virtual ICollection<ChiTietPhieuMuon>? ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
+    public virtual ICollection<ChiTietPhieuMuon> ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
 
-    public virtual ICollection<ChiTietPhieuTra>? ChiTietPhieuTras { get; set; } = new List<ChiTietPhieuTra>();
+    public virtual ICollection<ChiTietPhieuTra> ChiTietPhieuTras { get; set; } = new List<ChiTietPhieuTra>();
 
     public virtual KeSach? Ks { get; set; }
 

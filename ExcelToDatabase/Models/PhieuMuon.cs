@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class PhieuMuon
 {
@@ -19,7 +19,7 @@ public partial class PhieuMuon
 
     public virtual NguoiDung? Nd { get; set; }
 
-    public virtual ICollection<PhieuDongPhat>? PhieuDongPhats { get; set; } = new List<PhieuDongPhat>();
+    public virtual ICollection<PhieuDongPhat> PhieuDongPhats { get; set; } = new List<PhieuDongPhat>();
 
-    public virtual ICollection<PhieuTra>? PhieuTras { get; set; } = new List<PhieuTra>();
+    public virtual ICollection<PhieuTra> PhieuTras { get; set; } = new List<PhieuTra>();
 }

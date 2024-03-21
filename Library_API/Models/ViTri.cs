@@ -15,5 +15,5 @@ public partial class ViTri
 
     public virtual Osach? Os { get; set; }
 
-    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
 }

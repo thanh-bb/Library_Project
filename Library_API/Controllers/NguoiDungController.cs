@@ -74,5 +74,35 @@ namespace Library_API.Controllers
             return new JsonResult(table);
         }
 
+
+
+        [HttpPut]
+        public JsonResult Put(NguoiDung nd)
+        {
+            string query = @"
+                            update dbo.NguoiDung
+                            set nd_Active = @nd_Active
+                            where nd_Id=@nd_Id
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nd_Id", nd.NdId);
+                    myCommand.Parameters.AddWithValue("@nd_Active", nd.NdActive);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
     }
 }

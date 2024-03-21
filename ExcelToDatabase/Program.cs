@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Connect to the database
-builder.Services.AddDbContext<LibraryContext>(options =>
+builder.Services.AddDbContext<ExcelToDatabase.Entities.LibraryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 
 
@@ -18,7 +18,7 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 var app = builder.Build();
 
 // Access the DbContext within the ConfigureServices method
-var dbContext = builder.Services.BuildServiceProvider().GetService<LibraryContext>();
+var dbContext = builder.Services.BuildServiceProvider().GetService<ExcelToDatabase.Entities.LibraryContext>();
 
 
 // Configure the HTTP request pipeline.

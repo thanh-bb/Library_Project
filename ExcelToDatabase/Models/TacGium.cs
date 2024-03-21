@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class TacGium
 {
@@ -9,5 +9,5 @@ public partial class TacGium
 
     public string? TgTenTacGia { get; set; }
 
-    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
 }

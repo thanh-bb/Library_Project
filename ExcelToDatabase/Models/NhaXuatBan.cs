@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class NhaXuatBan
 {
@@ -9,5 +9,5 @@ public partial class NhaXuatBan
 
     public string? NxbTenNhaXuatBan { get; set; }
 
-    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
 }

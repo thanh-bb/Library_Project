@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class Quyen
 {
@@ -9,5 +9,5 @@ public partial class Quyen
 
     public string? QTenQuyen { get; set; }
 
-    public virtual ICollection<NguoiDung>? NguoiDungs { get; set; } = new List<NguoiDung>();
+    public virtual ICollection<NguoiDung> NguoiDungs { get; set; } = new List<NguoiDung>();
 }

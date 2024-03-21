@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library_API.Models;
+namespace ExcelToDatabase.Models;
 
 public partial class TheLoai
 {
@@ -13,5 +13,5 @@ public partial class TheLoai
 
     public virtual DanhMuc? Dm { get; set; }
 
-    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
 }

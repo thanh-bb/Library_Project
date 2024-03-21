@@ -1,73 +1,52 @@
 ﻿using ExcelDataReader;
-using ExcelToDatabase.Models;
-using ExcelToDatabase.Entities;
+using Library_API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Text;
 
-namespace ExcelToDatabase.Controllers
+namespace Library_API.Controllers
 {
-    public class HomeController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ImportFileController : ControllerBase
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly Entities.LibraryContext _context;
+        private readonly LibraryContext _libraryContext;
 
-        public HomeController(ILogger<HomeController> logger, Entities.LibraryContext context)
+        public ImportFileController(LibraryContext libraryContext)
         {
-            _logger = logger;
-            _context = context;
+            _libraryContext = libraryContext;
         }
 
-        public IActionResult Index()
+        [HttpPost("UploadExcelFile")]
+        public IActionResult UploadExcelFile([FromForm] IFormFile file)
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public IActionResult UploadExcel()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> UploadExcel(IFormFile file)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-            if (file != null && file.Length > 0)
+            try
             {
-                var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Uploads\\";
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest("No file upload");
+                }
+
+                var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Upload";
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
-
                 var filePath = Path.Combine(uploadsFolder, file.FileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await file.CopyToAsync(stream);
+                    file.CopyTo(stream);
                 }
 
                 using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
                 {
                     using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
+                        bool isHeaderSkipped = false;
                         do
                         {
-                            bool isHeaderSkipped = false;
-
                             while (reader.Read())
                             {
                                 if (!isHeaderSkipped)
@@ -76,11 +55,10 @@ namespace ExcelToDatabase.Controllers
                                     continue;
                                 }
 
-                                Entities.NguoiDung nd = new Entities.NguoiDung();
+                                NguoiDung nd = new NguoiDung();
                                 nd.NdUsername = reader.GetValue(1)?.ToString() ?? string.Empty;
                                 nd.NdPassword = reader.GetValue(2)?.ToString() ?? string.Empty;
                                 nd.NdHoTen = reader.GetValue(3)?.ToString() ?? string.Empty;
-
 
                                 if (!reader.IsDBNull(4))
                                 {
@@ -126,19 +104,24 @@ namespace ExcelToDatabase.Controllers
                                     nd.QId = "02";
                                 }
 
+                                nd.NdEmail = reader.GetValue(10).ToString() ?? string.Empty;
 
-                                _context.Add(nd);
-                                await _context.SaveChangesAsync();
+                                _libraryContext.Add(nd);
+                                _libraryContext.SaveChanges();
+
                             }
+
                         } while (reader.NextResult());
 
-                        ViewBag.Message = "success";
                     }
                 }
+
+                return Ok("Successfully Inserted");
             }
-            else
-                ViewBag.Message = "empty";
-            return View();
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
