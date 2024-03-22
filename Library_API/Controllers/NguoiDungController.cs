@@ -74,6 +74,35 @@ namespace Library_API.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet("FindByPmId/{pmId}")]
+        public JsonResult FindByPmId(int pmId)
+        {
+            string query = @"
+        SELECT * FROM dbo.NguoiDung
+        WHERE nd_Id IN (
+            SELECT nd_Id FROM dbo.PhieuMuon
+            WHERE pm_Id = @PmId
+        )
+    ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@PmId", pmId);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
 
 
         [HttpPut]

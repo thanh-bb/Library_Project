@@ -1,0 +1,21 @@
+﻿@model Library_API.Models.PhieuDongPhat
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>View Phieu Dong Phat</title>
+    <!-- Đưa vào các tệp CSS cần thiết nếu cần -->
+</head>
+<body>
+    <h1>Thông tin Phiếu Đóng Phạt</h1>
+    <div>
+        <h4>ID: @Model.PdpId</h4>
+        <p>Tổng tiền phạt: @Model.PdpTongTienPhat</p>
+        <p>Ngày đóng: @Model.PdpNgayDong</p>
+        <p>Trạng thái đóng: @Model.PdpTrangThaiDong</p>
+        <p>ID Phiếu mượn: @Model.PmId</p>
+    </div>
+    <!-- Đưa vào các mã HTML, CSS, JavaScript cần thiết khác nếu có -->
+</body>
+</html>

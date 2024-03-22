@@ -59,6 +59,7 @@ builder.Services.AddHostedService<PhieuMuonWorker>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllersWithViews();
 
 //
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -95,5 +96,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action}"
+    );
 
 app.Run();
