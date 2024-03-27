@@ -75,7 +75,38 @@ namespace Library_API.Controllers
 		}
 
 
-		[HttpPost]
+        [HttpGet("FindByNdId/{ndId}")]
+        public JsonResult FindByNdId(int ndId)
+        {
+            string query = @"
+                    SELECT pdp.* 
+                    FROM dbo.PhieuDongPhat pdp
+                    INNER JOIN dbo.PhieuMuon pm ON pdp.pm_Id = pm.pm_Id
+                    WHERE pm.nd_Id = @NdId
+                    ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@NdId", ndId);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+
+
+        [HttpPost]
 		public JsonResult Post(int pm_Id)
 		{
 			// Lấy ngày hôm nay
