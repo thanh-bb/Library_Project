@@ -102,6 +102,35 @@ namespace Library_API.Controllers
                         updateSoLuongCommand.Parameters.AddWithValue("@s_Id", chiTiet.SId);
                         updateSoLuongCommand.ExecuteNonQuery();
                     }
+
+                    // Kiểm tra và cập nhật trạng thái mượn của sách
+                    string checkSoLuongQuery = @"
+                    SELECT s_SoLuong
+                    FROM dbo.Sach
+                    WHERE s_Id = @s_Id
+                    ";
+
+                    using (SqlCommand checkSoLuongCommand = new SqlCommand(checkSoLuongQuery, myCon))
+                    {
+                        checkSoLuongCommand.Parameters.AddWithValue("@s_Id", chiTiet.SId);
+                        int soLuongConLai = Convert.ToInt32(checkSoLuongCommand.ExecuteScalar());
+
+                        if (soLuongConLai > 0)
+                        {
+                            string updateTrangThaiQuery = @"
+                            UPDATE dbo.Sach
+                            SET s_TrangThaiMuon = 'true'
+                            WHERE s_Id = @s_Id
+                            ";
+
+                            using (SqlCommand updateTrangThaiCommand = new SqlCommand(updateTrangThaiQuery, myCon))
+                            {
+                                updateTrangThaiCommand.Parameters.AddWithValue("@s_Id", chiTiet.SId);
+                                updateTrangThaiCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
                 }
                 myCon.Close();
             }
