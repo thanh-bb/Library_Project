@@ -68,7 +68,7 @@ public partial class LibraryContext : DbContext
             entity.HasOne(d => d.Pm).WithMany(p => p.ChiTietPhieuMuons)
                 .HasForeignKey(d => d.PmId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPh__pm_Id__4D94879B");
+                .HasConstraintName("FK__ChiTietPh__pm_Id__797309D9");
 
             entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietPhieuMuons)
                 .HasForeignKey(d => d.SId)
@@ -261,7 +261,7 @@ public partial class LibraryContext : DbContext
 
             entity.HasOne(d => d.Nd).WithMany(p => p.PhieuMuons)
                 .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__PhieuMuon__nd_Id__4BAC3F29");
+                .HasConstraintName("FK__PhieuMuon__nd_Id__778AC167");
         });
 
         modelBuilder.Entity<PhieuTra>(entity =>
@@ -347,11 +347,11 @@ public partial class LibraryContext : DbContext
 
             entity.HasOne(d => d.Ls).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.LsId)
-                .HasConstraintName("FK__Sach__ls_Id__49C3F6B7");
+                .HasConstraintName("FK__Sach__ls_Id__75A278F5");
 
             entity.HasOne(d => d.Nxb).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.NxbId)
-                .HasConstraintName("FK__Sach__nd_Id__47DBAE45");
+                .HasConstraintName("FK__Sach__nd_Id__73BA3083");
 
             entity.HasOne(d => d.Os).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.OsId)
@@ -359,7 +359,7 @@ public partial class LibraryContext : DbContext
 
             entity.HasOne(d => d.Tg).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.TgId)
-                .HasConstraintName("FK__Sach__tg_Id__46E78A0C");
+                .HasConstraintName("FK__Sach__tg_Id__72C60C4A");
 
             entity.HasOne(d => d.Tl).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.TlId)
