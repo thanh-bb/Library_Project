@@ -48,31 +48,50 @@ namespace Library_API.Controllers
         public JsonResult Post(TheLoai tl)
         {
             string query = @"
-                            insert into dbo.TheLoai
-                            (tl_TenTheLoai,dm_Id)
-                            values (@tl_TenTheLoai,@dm_Id)                            
-                            ";
+                    insert into dbo.TheLoai
+                    (tl_TenTheLoai,dm_Id)
+                    values (@tl_TenTheLoai,@dm_Id)                            
+                    ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                try
                 {
-                    myCommand.Parameters.AddWithValue("@tl_TenTheLoai", tl.TlTenTheLoai);
-                    myCommand.Parameters.AddWithValue("@dm_Id", tl.DmId);
+                    myCon.Open();
+                    using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                    {
+                        myCommand.Parameters.AddWithValue("@tl_TenTheLoai", tl.TlTenTheLoai);
+                        myCommand.Parameters.AddWithValue("@dm_Id", tl.DmId);
 
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
+                        myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
+                        myReader.Close();
+                    }
+                    return new JsonResult("Thêm thành công");
+                }
+                catch (SqlException ex)
+                {
+                    // Handle specific SQL errors
+                    if (ex.Number == 547)  // FK constraint violation error number
+                    {
+                        return new JsonResult("Thêm không thành công. Mã Danh Mục không tồn tại.");
+                    }
+                    else
+                    {
+                        // Handle other errors
+                        return new JsonResult("Thêm không thành công. Lỗi: " + ex.Message);
+                    }
+                }
+                finally
+                {
                     myCon.Close();
                 }
             }
-
-            return new JsonResult("Them thanh cong");
         }
+
 
 
         [HttpPut]
