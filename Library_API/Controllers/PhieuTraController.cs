@@ -23,10 +23,10 @@ namespace Library_API.Controllers
         public JsonResult Get()
         {
             string query = @"
-                            select * from
-                            dbo.PhieuTra
-                            "
-            ;
+                    SELECT pt.*, nd.nd_HoTen
+                    FROM dbo.PhieuTra pt
+                    INNER JOIN dbo.NguoiDung nd ON pt.nd_Id = nd.nd_Id
+                    ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
@@ -45,6 +45,7 @@ namespace Library_API.Controllers
 
             return new JsonResult(table);
         }
+
 
         [HttpPost]
         public JsonResult Post(PhieuTra pt)

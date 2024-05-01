@@ -234,6 +234,45 @@ namespace Library_API.Controllers
         }
 
 
+
+        [HttpGet("Count/{userId}")]
+        public JsonResult GetNumberOfBorrowReceiptsForUserInMonth(int userId)
+        {
+            // Get the current month and year
+            int currentMonth = DateTime.Now.Month;
+            int currentYear = DateTime.Now.Year;
+
+            string query = @"
+        SELECT COUNT(*) AS NumberOfBorrowReceipts
+        FROM dbo.PhieuMuon
+        WHERE MONTH(pm_NgayMuon) = @Month 
+        AND YEAR(pm_NgayMuon) = @Year
+        AND nd_Id = @UserId
+    ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Month", currentMonth);
+                    myCommand.Parameters.AddWithValue("@Year", currentYear);
+                    myCommand.Parameters.AddWithValue("@UserId", userId);
+                    myCon.Open();
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            // Retrieve the count from the DataTable
+            int numberOfBorrowReceipts = Convert.ToInt32(table.Rows[0]["NumberOfBorrowReceipts"]);
+
+            return new JsonResult(numberOfBorrowReceipts);
+        }
+
     }
 
 

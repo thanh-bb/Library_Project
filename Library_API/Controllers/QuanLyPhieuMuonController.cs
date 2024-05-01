@@ -167,6 +167,37 @@ namespace Library_API.Controllers
         }
 
 
+        [HttpGet("CheckMuon/{nd_Id}/{s_Id}")]
+        public JsonResult CheckMuon(int nd_Id, int s_Id)
+        {
+            string query = @"
+    SELECT pm.pm_TrangThai 
+    FROM dbo.PhieuMuon pm
+    INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
+    WHERE pm.nd_Id = @nd_Id AND ctpm.s_Id = @s_Id ";
+
+            string result = "không có kết quả trả về"; // Mặc định là "No" nếu không có kết quả trả về
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nd_Id", nd_Id);
+                    myCommand.Parameters.AddWithValue("@s_Id", s_Id);
+                    myCon.Open();
+                    object queryResult = myCommand.ExecuteScalar();
+                    if (queryResult != null)
+                    {
+                        result = queryResult.ToString(); // Lấy giá trị của cột pm_TrangThai
+                    }
+                }
+            }
+
+            return new JsonResult(result);
+        }
+
 
     }
 }

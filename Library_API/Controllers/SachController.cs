@@ -119,6 +119,7 @@ namespace Library_API.Controllers
             return new JsonResult("Them thanh cong");
         }
 
+
         [Route("SaveFile")]
         [HttpPost]
         public JsonResult SaveFile()
@@ -199,6 +200,32 @@ namespace Library_API.Controllers
             return new JsonResult("Cập nhật thành công");
         }
 
+
+        [HttpPut("NhapKho/{id}")]
+        public JsonResult NhapKho(int id, int soLuongNhap)
+        {
+            string query = @"
+        UPDATE dbo.Sach
+        SET s_SoLuong = s_SoLuong + @SoLuongNhap
+        WHERE s_Id = @Id
+        ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myCommand.Parameters.AddWithValue("@SoLuongNhap", soLuongNhap);
+
+                    myCommand.ExecuteNonQuery();
+                }
+            }
+
+            return new JsonResult("Nhập kho thành công");
+        }
 
 
 
