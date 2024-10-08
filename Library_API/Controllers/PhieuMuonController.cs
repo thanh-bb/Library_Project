@@ -79,6 +79,7 @@ namespace Library_API.Controllers
             return new JsonResult(table);
         }
 
+
         [HttpPost]
         public JsonResult Post(PhieuMuon pm)
         {
@@ -99,7 +100,7 @@ namespace Library_API.Controllers
                 {
                     myCommand.Parameters.AddWithValue("@pm_NgayMuon", pm.PmNgayMuon);
                     myCommand.Parameters.AddWithValue("@pm_HanTra", pm.PmHanTra);
-                    myCommand.Parameters.AddWithValue("@pm_TrangThai", pm.PmTrangThai);
+                    myCommand.Parameters.AddWithValue("@pm_TrangThaiMuon", pm.PmTrangThaiMuon);
                     myCommand.Parameters.AddWithValue("@nd_Id", pm.NdId);
 
                     // Thực hiện lấy ID của phiếu mượn mới thêm vào
@@ -192,7 +193,7 @@ namespace Library_API.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
                     myCommand.Parameters.AddWithValue("@pm_Id", pm.PmId);
-                    myCommand.Parameters.AddWithValue("@pm_TrangThai", pm.PmTrangThai);
+                    myCommand.Parameters.AddWithValue("@pm_TrangThaiMuon", pm.PmTrangThaiMuon);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();

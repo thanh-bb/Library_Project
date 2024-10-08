@@ -15,9 +15,9 @@ namespace Library_API.Controllers
 	[ApiController]
 	public class ExportPDFController : ControllerBase
 	{
-		private readonly LibraryContext _libraryContext;
+		private readonly OnlineLibraryContext _libraryContext;
 
-		public ExportPDFController(LibraryContext libraryContext)
+		public ExportPDFController(OnlineLibraryContext libraryContext)
 		{
 			_libraryContext = libraryContext;
 		}

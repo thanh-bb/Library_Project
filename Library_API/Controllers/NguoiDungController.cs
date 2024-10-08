@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace Library_API.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class NguoiDungController : ControllerBase
@@ -132,6 +132,91 @@ namespace Library_API.Controllers
             }
 
             return new JsonResult(table);
+        }
+
+        [HttpPost]
+        public JsonResult Post(NguoiDung nd)
+        {
+            // Updated query to include SCOPE_IDENTITY()
+            string query = @"
+        INSERT INTO dbo.NguoiDung
+        (nd_Username, nd_CCCD, nd_SoDienThoai, nd_HinhThe, nd_Password, 
+        nd_HoTen, nd_NgaySinh, nd_GioiTinh, nd_Email, nd_DiaChi, nd_NgayDangKy,
+        nd_ThoiGianSuDung, nd_active, q_Id, lnd_LoaiNguoiDung)
+        VALUES
+        (@nd_Username, @nd_CCCD, @nd_SoDienThoai, @nd_HinhThe, @nd_Password, 
+        @nd_HoTen, @nd_NgaySinh, @nd_GioiTinh, @nd_Email, @nd_DiaChi, @nd_NgayDangKy,
+        @nd_ThoiGianSuDung, @nd_active, @q_Id, @lnd_LoaiNguoiDung);
+        
+        -- Retrieve the ID of the newly inserted record
+        SELECT SCOPE_IDENTITY();
+    ";
+
+            int newId;
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nd_Username", nd.NdUsername);
+                    myCommand.Parameters.AddWithValue("@nd_CCCD", nd.NdCccd);
+                    myCommand.Parameters.AddWithValue("@nd_SoDienThoai", nd.NdSoDienThoai);
+                    myCommand.Parameters.AddWithValue("@nd_HinhThe", nd.NdHinhThe);
+                    myCommand.Parameters.AddWithValue("@nd_Password", nd.NdPassword);
+                    myCommand.Parameters.AddWithValue("@nd_HoTen", nd.NdHoTen);
+                    myCommand.Parameters.AddWithValue("@nd_NgaySinh", nd.NdNgaySinh);
+                    myCommand.Parameters.AddWithValue("@nd_GioiTinh", nd.NdGioiTinh);
+                    myCommand.Parameters.AddWithValue("@nd_Email", nd.NdEmail);
+                    myCommand.Parameters.AddWithValue("@nd_DiaChi", nd.NdDiaChi);
+                    myCommand.Parameters.AddWithValue("@nd_NgayDangKy", nd.NdNgayDangKy);
+                    myCommand.Parameters.AddWithValue("@nd_ThoiGianSuDung", nd.NdThoiGianSuDung);
+                    myCommand.Parameters.AddWithValue("@nd_active", nd.NdActive);
+                    myCommand.Parameters.AddWithValue("@q_Id", nd.QId);
+                    myCommand.Parameters.AddWithValue("@lnd_LoaiNguoiDung", nd.LndLoaiNguoiDung);
+
+                    // Execute the query and retrieve the ID of the new record
+                    newId = Convert.ToInt32(myCommand.ExecuteScalar());
+                }
+                myCon.Close();
+            }
+
+            return new JsonResult(newId);
+        }
+
+        // Kiem tra username
+
+        [HttpGet("CheckUsernameAvailability")]
+        public async Task<IActionResult> CheckUsernameAvailability(string username)
+        {
+            string checkUsernameQuery = @"
+                                    SELECT COUNT(1) FROM dbo.NguoiDung
+                                    WHERE nd_Username = @nd_Username;
+                                    ";
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand checkCmd = new SqlCommand(checkUsernameQuery, myCon))
+                {
+                    checkCmd.Parameters.AddWithValue("@nd_Username", username);
+                    int usernameCount = (int)checkCmd.ExecuteScalar();
+
+                    if (usernameCount > 0)
+                    {
+                        // Username already exists, return a conflict response
+                        return Ok(false);
+                    }
+
+                }
+
+                myCon.Close();
+            }
+            return Ok(true); // Username khả dụng
+
         }
     }
 }

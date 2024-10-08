@@ -6,9 +6,9 @@ namespace Authentication.Models
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
 
-        private readonly LibraryContext _context;
+        private readonly OnlineLibraryContext _context;
 
-        public RefreshTokenGenerator(LibraryContext learnDb)
+        public RefreshTokenGenerator(OnlineLibraryContext learnDb)
         {
             _context = learnDb;
 

@@ -13,8 +13,8 @@ namespace Library_API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
-        private readonly LibraryContext _dbContext;
-        public MailController(IConfiguration configuration, IEmailService service, LibraryContext dbContext)
+        private readonly OnlineLibraryContext _dbContext;
+        public MailController(IConfiguration configuration, IEmailService service, OnlineLibraryContext dbContext)
         {
             _configuration = configuration;
             _emailService = service;
@@ -32,7 +32,7 @@ namespace Library_API.Controllers
                     nd => nd.NdId,
                     pm => pm.NdId,
                     (nd, pm) => new { User = nd, PM = pm })
-                    .Where(x => x.PM.PmTrangThai == "Đang mượn" && x.PM.PmHanTra < DateTime.Today)
+                    .Where(x => x.PM.PmTrangThaiMuon == "Đang mượn" && x.PM.PmHanTra < DateTime.Today)
                     .Select(x => x.User.NdEmail)
                     .ToListAsync();
 
@@ -66,15 +66,95 @@ namespace Library_API.Controllers
 
             string Response = "<p>Chào bạn,</p>";
             Response += "<p>Đây là thông báo từ thư viện Trường Đại học Cần Thơ. Chúng tôi ghi nhận được bạn đã không trả sách đúng hạn.</p>";
-			Response += "<p>Chúng tôi gửi mail này nhằm cảnh báo và yêu cầu bạn trả sách cho thư viện chúng tôi.</p>";
-			Response += "<p>Thư viện sẽ bắt đầu tính phí đóng phạt từ sau hạn trả sách 1 ngày. Khi mang sách đến thư viện bạn sẽ nhận được hóa đơn đóng phạt được tính theo quy định.</p>";
-			Response += "<p>Lưu ý rằng, nếu sau 30 ngày kể từ Hạn trả sách mà bạn vẫn chưa tiến hành trả sách về thư viện cũng như đóng phạt theo yêu cầu thì tài khoản của bạn sẽ bị khóa tạm thời trong 100 ngày (tài khoản bị khóa sẽ không được mượn sách) và nếu sai phạm liên tục thì sẽ bị khóa tài khoản vĩnh viễn. Nếu muốn kích hoạt lại tài khoản thì bạn cần đóng đủ tiền phạt và trả đủ số lượng sách cho thư viện.</p>";
-			Response += "<br>";
-			Response += "<p>Thân mến,</p>";
-			Response += "<p>Admin Thư viện</p>";
+            Response += "<p>Chúng tôi gửi mail này nhằm cảnh báo và yêu cầu bạn trả sách cho thư viện chúng tôi.</p>";
+            Response += "<p>Thư viện sẽ bắt đầu tính phí đóng phạt từ sau hạn trả sách 1 ngày. Khi mang sách đến thư viện bạn sẽ nhận được hóa đơn đóng phạt được tính theo quy định.</p>";
+            Response += "<p>Lưu ý rằng, nếu sau 30 ngày kể từ Hạn trả sách mà bạn vẫn chưa tiến hành trả sách về thư viện cũng như đóng phạt theo yêu cầu thì tài khoản của bạn sẽ bị khóa tạm thời trong 100 ngày (tài khoản bị khóa sẽ không được mượn sách) và nếu sai phạm liên tục thì sẽ bị khóa tài khoản vĩnh viễn. Nếu muốn kích hoạt lại tài khoản thì bạn cần đóng đủ tiền phạt và trả đủ số lượng sách cho thư viện.</p>";
+            Response += "<br>";
+            Response += "<p>Thân mến,</p>";
+            Response += "<p>Admin Thư viện</p>";
 
 
-			return Response;
+            return Response;
+        }
+
+
+        [HttpPost("SendWelcomeEmail")]
+        public async Task<IActionResult> SendWelcomeEmail(int userId)
+        {
+            try
+            {
+                // Lấy thông tin người dùng từ bảng NguoiDung dựa trên userId
+                var user = await _dbContext.NguoiDungs
+                    .Where(nd => nd.NdId == userId)
+                    .Select(nd => new { nd.NdEmail, nd.NdUsername, nd.NdPassword })
+                    .FirstOrDefaultAsync();
+
+                // Kiểm tra xem người dùng có tồn tại hay không
+                if (user == null)
+                {
+                    return NotFound("Người dùng không tồn tại.");
+                }
+
+                // Tạo yêu cầu gửi mail
+                Mailrequest mailrequest = new Mailrequest
+                {
+                    ToEmail = user.NdEmail,
+                    Subject = "Thông tin về tài khoản hội viên thư viên trường Đại học",
+                    Body = GetWelcomeEmailContent(user.NdUsername, user.NdPassword)
+                };
+
+                // Gửi email
+                await _emailService.SendEmailAsync(mailrequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        private string GetWelcomeEmailContent(string username, string password)
+        {
+            string response = "<p>Chào bạn,</p>";
+            response += "<p>Chúc mừng bạn đã tạo tài khoản thành công trên hệ thống thư viện Trường Đại học Cần Thơ.</p>";
+            response += "<p>Dưới đây là thông tin tài khoản của bạn:</p>";
+            response += $"<p><strong>Username:</strong> {username}</p>";
+            response += $"<p><strong>Password:</strong> {password}</p>";
+            response += "<p>Hãy bảo mật thông tin này và thay đổi mật khẩu sau khi đăng nhập lần đầu.</p>";
+            response += "<br>";
+            response += "<p>Thân mến,</p>";
+            response += "<p>Admin Thư viện</p>";
+
+            return response;
+        }
+
+
+        // Send OTP
+        private string GenerateRandomNumber()
+        {
+            Random random = new Random();
+            string randomNumber = random.Next(0, 100000000).ToString("D6");
+            return randomNumber;
+        }
+
+        private async Task SendOtpMail(string usermail, string OtpText, string Name)
+        {
+            var mailRequest = new Mailrequest();
+            mailRequest.ToEmail = usermail;
+            mailRequest.Subject = "OTP xác thực đổi mật khẩu";
+            mailRequest.Body = GenerateEmailBody(Name, OtpText);
+            await this._emailService.SendEmailAsync(mailRequest);
+        }
+
+        private string GenerateEmailBody(string name, string otptext)
+        {
+            string emailbody = "<div style='width:100%;background-color:grey'>";
+            emailbody += "<h1>Hi " + name + ", Thanks for registering</h1>";
+            emailbody += "<h2>Please enter OTP text and complete the registeration</h2>";
+            emailbody += "<h2>OTP Text is :" + otptext + "</h2>";
+            emailbody += "</div>";
+
+            return emailbody;
         }
     }
 }

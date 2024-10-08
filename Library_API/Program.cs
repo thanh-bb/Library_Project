@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
@@ -18,7 +18,7 @@ builder.Services.AddControllers();
 
 
 // Connect to the database
-builder.Services.AddDbContext<LibraryContext>(options =>
+builder.Services.AddDbContext<OnlineLibraryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 
 //send email
@@ -47,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Access the DbContext within the ConfigureServices method
-var dbContext = builder.Services.BuildServiceProvider().GetService<LibraryContext>();
+var dbContext = builder.Services.BuildServiceProvider().GetService<OnlineLibraryContext>();
 
 // Refresh Token
 builder.Services.AddSingleton<IRefreshTokenGenerator>(provider => new RefreshTokenGenerator(dbContext));

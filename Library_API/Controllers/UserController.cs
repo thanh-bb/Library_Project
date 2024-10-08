@@ -14,11 +14,11 @@ namespace Library_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly LibraryContext _context;
+        private readonly OnlineLibraryContext _context;
         private readonly JWTSetting _jwtSetting;
         private readonly IRefreshTokenGenerator _tokenGenerator;
 
-        public UserController(LibraryContext learnDb, IOptions<JWTSetting> options, IRefreshTokenGenerator refreshTokenGenerator)
+        public UserController(OnlineLibraryContext learnDb, IOptions<JWTSetting> options, IRefreshTokenGenerator refreshTokenGenerator)
         {
             _context = learnDb;
             _jwtSetting = options.Value;

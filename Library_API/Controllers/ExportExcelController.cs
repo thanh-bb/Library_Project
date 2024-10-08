@@ -10,9 +10,9 @@ namespace Library_API.Controllers
 	[ApiController]
 	public class ExportExcelController : ControllerBase
 	{
-		private readonly LibraryContext _libraryContext;
+		private readonly OnlineLibraryContext _libraryContext;
 
-		public ExportExcelController(LibraryContext libraryContext)
+		public ExportExcelController(OnlineLibraryContext libraryContext)
 		{
 			_libraryContext = libraryContext;
 		}

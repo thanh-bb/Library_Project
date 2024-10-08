@@ -11,15 +11,17 @@ public partial class PhieuMuon
 
     public DateTime? PmHanTra { get; set; }
 
-    public string? PmTrangThai { get; set; }
+    public string? PmTrangThaiMuon { get; set; }
+
+    public string? PmTrangThaiXetDuyet { get; set; }
 
     public int? NdId { get; set; }
 
-    public virtual ICollection<ChiTietPhieuMuon>? ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
+    public virtual ICollection<ChiTietPhieuMuon> ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
 
     public virtual NguoiDung? Nd { get; set; }
 
-    public virtual ICollection<PhieuDongPhat>? PhieuDongPhats { get; set; } = new List<PhieuDongPhat>();
+    public virtual ICollection<PhieuDongPhat> PhieuDongPhats { get; set; } = new List<PhieuDongPhat>();
 
-    public virtual ICollection<PhieuTra>? PhieuTras { get; set; } = new List<PhieuTra>();
+    public virtual ICollection<PhieuTra> PhieuTras { get; set; } = new List<PhieuTra>();
 }

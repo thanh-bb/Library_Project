@@ -9,9 +9,9 @@ namespace Library_API.Controllers
     [ApiController]
     public class ImportFileController : ControllerBase
     {
-        private readonly LibraryContext _libraryContext;
+        private readonly OnlineLibraryContext _libraryContext;
 
-        public ImportFileController(LibraryContext libraryContext)
+        public ImportFileController(OnlineLibraryContext libraryContext)
         {
             _libraryContext = libraryContext;
         }

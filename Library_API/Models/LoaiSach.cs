@@ -13,9 +13,5 @@ public partial class LoaiSach
 
     public string? LsGhiChu { get; set; }
 
-    public int? GpId { get; set; }
-
-    public virtual GiaPhat? Gp { get; set; }
-
-    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
 }
