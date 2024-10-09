@@ -25,7 +25,7 @@ namespace Library_API.Controllers
         public JsonResult Get()
         {
             string query = @"
-        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThaiMuon, pm.pm_NgayMuon, pm.pm_HanTra,
                ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
                s.s_TenSach
         FROM dbo.PhieuMuon pm
@@ -54,7 +54,7 @@ namespace Library_API.Controllers
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
                             HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
-                            TrangThai = myReader["pm_TrangThai"].ToString()
+                            TrangThai = myReader["pm_TrangThaiMuon"].ToString()
                         };
                         quanLyPhieuMuons.Add(phieuMuon);
                     }
@@ -72,7 +72,7 @@ namespace Library_API.Controllers
         public JsonResult Get(int ndId)
         {
             string query = @"
-        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThaiMuon, pm.pm_NgayMuon, pm.pm_HanTra,
                ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
                s.s_TenSach
         FROM dbo.PhieuMuon pm
@@ -104,7 +104,7 @@ namespace Library_API.Controllers
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
                             HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
-                            TrangThai = myReader["pm_TrangThai"].ToString()
+                            TrangThai = myReader["pm_TrangThaiMuon"].ToString()
                         };
                         quanLyPhieuMuons.Add(phieuMuon);
                     }
@@ -122,7 +122,7 @@ namespace Library_API.Controllers
         public JsonResult GetByPmId(int pmId)
         {
             string query = @"
-        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThai, pm.pm_NgayMuon, pm.pm_HanTra,
+        SELECT pm.pm_Id,pm.nd_Id, pm.pm_TrangThaiMuon, pm.pm_NgayMuon, pm.pm_HanTra,
                ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
                s.s_TenSach
         FROM dbo.PhieuMuon pm
@@ -154,7 +154,7 @@ namespace Library_API.Controllers
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
                             HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
-                            TrangThai = myReader["pm_TrangThai"].ToString()
+                            TrangThai = myReader["pm_TrangThaiMuon"].ToString()
                         };
                         quanLyPhieuMuons.Add(phieuMuon);
                     }
@@ -171,7 +171,7 @@ namespace Library_API.Controllers
         public JsonResult CheckMuon(int nd_Id, int s_Id)
         {
             string query = @"
-    SELECT pm.pm_TrangThai 
+    SELECT pm.pm_TrangThaiMuon 
     FROM dbo.PhieuMuon pm
     INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
     WHERE pm.nd_Id = @nd_Id AND ctpm.s_Id = @s_Id ";

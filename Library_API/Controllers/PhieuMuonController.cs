@@ -85,8 +85,8 @@ namespace Library_API.Controllers
         {
             string query = @"
         INSERT INTO dbo.PhieuMuon
-        (pm_NgayMuon, pm_HanTra, pm_TrangThai, nd_Id)
-        VALUES (@pm_NgayMuon, @pm_HanTra, @pm_TrangThai, @nd_Id);
+        (pm_NgayMuon, pm_HanTra, pm_TrangThaiMuon, nd_Id, pm_TrangThaiXetDuyet)
+        VALUES (@pm_NgayMuon, @pm_HanTra, @pm_TrangThaiMuon, @nd_Id, @pm_TrangThaiXetDuyet);
         SELECT SCOPE_IDENTITY(); -- Lấy ID của phiếu mượn mới thêm vào
         ";
 
@@ -102,6 +102,7 @@ namespace Library_API.Controllers
                     myCommand.Parameters.AddWithValue("@pm_HanTra", pm.PmHanTra);
                     myCommand.Parameters.AddWithValue("@pm_TrangThaiMuon", pm.PmTrangThaiMuon);
                     myCommand.Parameters.AddWithValue("@nd_Id", pm.NdId);
+                    myCommand.Parameters.AddWithValue("@pm_TrangThaiXetDuyet", pm.PmTrangThaiXetDuyet);
 
                     // Thực hiện lấy ID của phiếu mượn mới thêm vào
                     newPmId = Convert.ToInt32(myCommand.ExecuteScalar());
@@ -180,7 +181,7 @@ namespace Library_API.Controllers
         {
             string query = @"
                             update dbo.PhieuMuon
-                            set pm_TrangThai = @pm_TrangThai
+                            set pm_TrangThaiMuon = @pm_TrangThaiMuon
                             where pm_Id=@pm_Id
                             ";
 
@@ -212,12 +213,12 @@ namespace Library_API.Controllers
         {
             string query = @"
         UPDATE dbo.PhieuMuon
-        SET pm_TrangThai = 
+        SET pm_TrangThaiMuon = 
             CASE
-                WHEN pm_TrangThai = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1 THEN 'Quá hạn trả'
-                ELSE pm_TrangThai
+                WHEN pm_TrangThaiMuon = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1 THEN 'Quá hạn trả'
+                ELSE pm_TrangThaiMuon
             END
-        WHERE pm_TrangThai = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1
+        WHERE pm_TrangThaiMuon = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1
     ";
 
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
