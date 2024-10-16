@@ -207,6 +207,54 @@ namespace Library_API.Controllers
 
 
 
+        [HttpPut("XetDuyet")]
+        public JsonResult XetDuyet(PhieuMuon pm)
+        {
+            string query = @"
+                     update dbo.PhieuMuon
+                     set pm_TrangThaiXetDuyet = @pm_TrangThaiXetDuyet
+                     where pm_Id = @pm_Id
+                    ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@pm_Id", pm.PmId);
+                    myCommand.Parameters.AddWithValue("@pm_TrangThaiXetDuyet", pm.PmTrangThaiXetDuyet);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+
+                // Kiểm tra nếu trạng thái xét duyệt là "Đã xét duyệt" thì cập nhật trạng thái mượn thành "Đang mượn"
+                if (pm.PmTrangThaiXetDuyet == "Đã xét duyệt")
+                {
+                    string updateTrangThaiMuonQuery = @"
+                     update dbo.PhieuMuon
+                     set pm_TrangThaiMuon = N'Đang mượn'
+                     where pm_Id = @pm_Id
+                    ";
+
+                    using (SqlCommand updateCommand = new SqlCommand(updateTrangThaiMuonQuery, myCon))
+                    {
+                        updateCommand.Parameters.AddWithValue("@pm_Id", pm.PmId);
+                        updateCommand.ExecuteNonQuery();
+                    }
+                }
+
+                myCon.Close();
+            }
+
+            return new JsonResult("Cập nhật trạng thái xét duyệt và trạng thái mượn thành công");
+        }
+
+
 
         [HttpPost("CapNhatTrangThai")]
         public JsonResult CapNhatTrangThai()

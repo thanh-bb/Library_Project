@@ -15,8 +15,9 @@
 
         public DateTime HanTra { get; set; }
 
-        public string TrangThai { get; set; }
+        public string TrangThaiMuon { get; set; }
 
+        public string TrangThaiXetDuyet { get; set; }
 
     }
 }
