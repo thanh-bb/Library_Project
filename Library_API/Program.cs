@@ -25,6 +25,9 @@ builder.Services.AddDbContext<OnlineLibraryContext>(options =>
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
+
 
 // JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("JWTSetting").Get<JWTSetting>();
