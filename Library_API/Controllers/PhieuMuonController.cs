@@ -297,7 +297,8 @@ namespace Library_API.Controllers
         FROM dbo.PhieuMuon
         WHERE MONTH(pm_NgayMuon) = @Month 
         AND YEAR(pm_NgayMuon) = @Year
-        AND nd_Id = @UserId
+        AND nd_Id = @UserId 
+        AND pm_TrangThaiXetDuyet = N'Chờ xét duyệt'
     ";
 
             DataTable table = new DataTable();

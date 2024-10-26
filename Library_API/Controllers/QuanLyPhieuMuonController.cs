@@ -174,7 +174,7 @@ namespace Library_API.Controllers
         public JsonResult CheckMuon(int nd_Id, int s_Id)
         {
             string query = @"
-    SELECT pm.pm_TrangThaiMuon 
+    SELECT pm.pm_TrangThaiXetDuyet
     FROM dbo.PhieuMuon pm
     INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
     WHERE pm.nd_Id = @nd_Id AND ctpm.s_Id = @s_Id ";

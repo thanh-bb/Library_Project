@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library_API", "Library_API\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelToDatabase", "ExcelToDatabase\ExcelToDatabase.csproj", "{03646016-BF56-4382-9E40-D6BCE8F97331}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VNPAY", "VNPAY\VNPAY.csproj", "{00711CA0-04F1-4F20-8341-729489B87E3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VNPAY", "VNPAY\VNPAY.csproj", "{00711CA0-04F1-4F20-8341-729489B87E3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
