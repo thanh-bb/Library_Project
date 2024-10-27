@@ -130,28 +130,41 @@ namespace Library_API.Controllers
         [HttpDelete("{id}")]
         public JsonResult Delete(int id)
         {
-            string query = @"
-                            delete from dbo.Theloai
-                            where tl_Id=@tl_Id
-                            ";
+            // Câu lệnh SQL kiểm tra khóa ngoại
+            string checkQuery = "SELECT COUNT(1) FROM dbo.Sach WHERE tl_Id = @tl_Id";
+            // Câu lệnh SQL xóa bản ghi nếu không có ràng buộc
+            string deleteQuery = "DELETE FROM dbo.TheLoai WHERE tl_Id = @tl_Id";
 
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
-            SqlDataReader myReader;
+
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
                 myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+
+                // Kiểm tra xem có sách nào tham chiếu tới thể loại này không
+                using (SqlCommand checkCommand = new SqlCommand(checkQuery, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@tl_Id", id);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
+                    checkCommand.Parameters.AddWithValue("@tl_Id", id);
+                    int count = (int)checkCommand.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        // Trả về lỗi nếu có sách tham chiếu
+                        return new JsonResult("Không thể xóa thể loại này vì có sách liên quan.");
+                    }
                 }
+
+                // Xóa nếu không có bản ghi tham chiếu
+                using (SqlCommand deleteCommand = new SqlCommand(deleteQuery, myCon))
+                {
+                    deleteCommand.Parameters.AddWithValue("@tl_Id", id);
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                myCon.Close();
             }
 
-            return new JsonResult("Xóa thành công");
+            return new JsonResult("Xóa thể loại thành công.");
         }
 
     }

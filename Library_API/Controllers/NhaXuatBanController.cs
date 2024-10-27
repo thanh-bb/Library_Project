@@ -96,28 +96,45 @@ namespace Library_API.Controllers
 
 
         [HttpDelete("{id}")]
-        public JsonResult Delete ( int id)
+        public JsonResult Delete(int id)
         {
-            string query = @"delete from dbo.NhaXuatBan where nxb_Id = @nxb_Id";
-            DataTable table = new DataTable();
+            // Câu lệnh SQL kiểm tra khóa ngoại
+            string checkQuery = "SELECT COUNT(1) FROM dbo.Sach WHERE nxb_Id = @nxb_Id";
+            // Câu lệnh SQL xóa bản ghi nếu không có ràng buộc khóa ngoại
+            string deleteQuery = "DELETE FROM dbo.NhaXuatBan WHERE nxb_Id = @nxb_Id";
 
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
-            SqlDataReader myReader;
+
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
                 myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+
+                // Kiểm tra khóa ngoại trước khi xóa
+                using (SqlCommand checkCommand = new SqlCommand(checkQuery, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@nxb_Id", id);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
+                    checkCommand.Parameters.AddWithValue("@nxb_Id", id);
+                    int count = (int)checkCommand.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        // Trả về lỗi nếu có sách tham chiếu
+                        return new JsonResult("Không thể xóa nhà xuất bản này vì có sách liên quan.");
+                    }
                 }
+
+                // Xóa nếu không có bản ghi tham chiếu
+                using (SqlCommand deleteCommand = new SqlCommand(deleteQuery, myCon))
+                {
+                    deleteCommand.Parameters.AddWithValue("@nxb_Id", id);
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                myCon.Close();
             }
 
-            return new JsonResult("Xoa thanh cong");
+            return new JsonResult("Xóa nhà xuất bản thành công.");
         }
+
 
 
 

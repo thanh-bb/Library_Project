@@ -31,7 +31,8 @@ namespace Library_API.Controllers
                     SId = g.Key, // Lấy s_Id
                     STenSach = _context.Saches.FirstOrDefault(s => s.SId == g.Key).STenSach,
                     SoLanMuon = (int)g.Sum(ctpm => ctpm.CtpmSoLuongSachMuon),
-                    TgId = _context.Saches.FirstOrDefault(s => s.SId == g.Key).TgId
+                    TgId = _context.Saches.FirstOrDefault(s => s.SId == g.Key).TgId,
+                    STrangThaiMuon = _context.Saches.FirstOrDefault(s => s.SId == g.Key).STrangThaiMuon
                 })
                 .OrderByDescending(s => s.SoLanMuon)
                 .ToListAsync();

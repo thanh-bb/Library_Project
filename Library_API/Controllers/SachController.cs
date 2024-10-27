@@ -80,9 +80,9 @@ namespace Library_API.Controllers
         {
             string query = @"
                     INSERT INTO dbo.Sach
-                    (s_TenSach, s_SoLuong, s_MoTa, s_TrongLuong, s_NamXuatBan, s_TrangThaiMuon, s_ChiDoc,
+                    (s_TenSach, s_SoLuong, s_MoTa, s_TrongLuong, s_NamXuatBan, s_ChiDoc,
                      tg_Id, nxb_Id,tl_Id, ls_Id, ks_Id, os_Id)
-                    VALUES (@s_TenSach, @s_SoLuong, @s_MoTa, @s_TrongLuong, @s_NamXuatBan, @s_TrangThaiMuon, @s_ChiDoc,
+                    VALUES (@s_TenSach, @s_SoLuong, @s_MoTa, @s_TrongLuong, @s_NamXuatBan, @s_ChiDoc,
                      @tg_Id, @nxb_Id,@tl_Id, @ls_Id, @ks_Id, @os_Id )      
 
                     SELECT SCOPE_IDENTITY();
@@ -102,7 +102,7 @@ namespace Library_API.Controllers
                     myCommand.Parameters.AddWithValue("@s_MoTa", s.SMoTa);
                     myCommand.Parameters.AddWithValue("@s_TrongLuong", s.STrongLuong);
                     myCommand.Parameters.AddWithValue("@s_NamXuatBan", s.SNamXuatBan);
-                    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
+             //       myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
                     myCommand.Parameters.AddWithValue("@s_ChiDoc", s.SChiDoc);
                     myCommand.Parameters.AddWithValue("@tg_Id", s.TgId);
                     myCommand.Parameters.AddWithValue("@nxb_Id", s.NxbId);
@@ -158,7 +158,6 @@ namespace Library_API.Controllers
                 s_MoTa=@s_MoTa,
                 s_TrongLuong=@s_TrongLuong,
                 s_NamXuatBan= @s_NamXuatBan,
-                s_TrangThaiMuon= CASE WHEN @s_SoLuong > 0 THEN 'true' ELSE s_TrangThaiMuon END,
                 s_ChiDoc=@s_ChiDoc,
                 tg_Id=@tg_Id, 
                 nxb_Id=@nxb_Id, 
@@ -183,7 +182,7 @@ namespace Library_API.Controllers
                     myCommand.Parameters.AddWithValue("@s_MoTa", s.SMoTa);
                     myCommand.Parameters.AddWithValue("@s_TrongLuong", s.STrongLuong);
                     myCommand.Parameters.AddWithValue("@s_NamXuatBan", s.SNamXuatBan);
-                    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
+                //    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
                     myCommand.Parameters.AddWithValue("@s_ChiDoc", s.SChiDoc);
                     myCommand.Parameters.AddWithValue("@tg_Id", s.TgId);
                     myCommand.Parameters.AddWithValue("@nxb_Id", s.NxbId);
@@ -235,16 +234,14 @@ namespace Library_API.Controllers
         public JsonResult Delete(int id)
         {
             string querySach = @"
-                        delete from dbo.Sach
-                        where s_Id=@s_Id";
+                 DELETE FROM dbo.Sach
+                 WHERE s_Id = @s_Id";
 
             string queryHinhMinhHoa = @"
-                                  delete from dbo.HinhMinhHoa
-                                  where s_Id=@s_Id";
+                 DELETE FROM dbo.HinhMinhHoa
+                 WHERE s_Id = @s_Id";
 
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
-            SqlDataReader myReader;
 
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
@@ -253,30 +250,32 @@ namespace Library_API.Controllers
                 {
                     try
                     {
-                        // Delete from HinhAnhMinhHoa
+                        // Xóa Hình Minh Họa trước
                         using (SqlCommand myCommand = new SqlCommand(queryHinhMinhHoa, myCon, transaction))
                         {
                             myCommand.Parameters.AddWithValue("@s_Id", id);
-                            myReader = myCommand.ExecuteReader();
-                            table.Load(myReader);
-                            myReader.Close();
+                            myCommand.ExecuteNonQuery();
                         }
 
-                        // Delete from Sach
+                        // Xóa Sách sau khi xóa Hình Minh Họa thành công
                         using (SqlCommand myCommand = new SqlCommand(querySach, myCon, transaction))
                         {
                             myCommand.Parameters.AddWithValue("@s_Id", id);
-                            myReader = myCommand.ExecuteReader();
-                            table.Load(myReader);
-                            myReader.Close();
+                            int affectedRows = myCommand.ExecuteNonQuery();
+
+                            // Kiểm tra xem có bản ghi nào được xóa không
+                            if (affectedRows == 0)
+                            {
+                                throw new Exception("Không tìm thấy sách với ID này hoặc không thể xóa.");
+                            }
                         }
 
                         transaction.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return new JsonResult("Xóa thất bại");
+                        return new JsonResult($"Xóa thất bại: {ex.Message}");
                     }
                     finally
                     {
@@ -288,6 +287,34 @@ namespace Library_API.Controllers
             return new JsonResult("Xóa thành công");
         }
 
+        [HttpPut("Put_TrangThai")]  
+        public JsonResult Put_TrangThai(Sach s)
+        {
+            string query = @"
+                            update dbo.Sach
+                            set s_TrangThaiMuon = @s_TrangThaiMuon
+                            where s_Id=@s_Id
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@s_Id", s.SId);
+                    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult("Cập nhật thành công");
+        }
 
     }
 }
