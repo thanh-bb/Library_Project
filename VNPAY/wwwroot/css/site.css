@@ -20,3 +20,38 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.container h1 {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.card-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    transition: border-color 0.3s;
+}
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }

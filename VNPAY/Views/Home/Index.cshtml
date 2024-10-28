@@ -1,56 +1,63 @@
-﻿@{
+﻿<!-- View - Hiển thị giao diện với định dạng số tiền -->
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Thanh toán VnPay tại <a href="https://code-mega.com">Code Mega</a></h1>
-    <p>Learn about <a href="https://code-mega.com">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5 w-50">
+    <div class="text-center">
+        <h2 class="fw-bold">
+            Thanh Toán VNPay
+            <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg" alt="VnPay Logo" style="width: 70px; vertical-align: middle; margin-left: 10px;">
+        </h2>
+    </div>
 
-    <h2>Thông tin giao dịch</h2>
-    <p>Tên khách hàng: @ViewBag.CustomerName</p>
-    <p>Số tiền: @ViewBag.Amount</p>
-    <p>Nội dung: @ViewBag.Description</p>
+    <div class="card my-4 shadow-lg p-4">
+        <div class="card-body">
+            <h2 class="card-title text-center text-primary fw-bold">Thông tin giao dịch</h2>
+            <form action="/Home/CreatePaymentUrl" id="frmCreateOrder" method="POST">
 
-</div>
+                <!-- Loại hàng hóa -->
+                <div class="form-group mb-4">
+                    <label for="ordertype" class="fw-bold">Tên sản phẩm</label>
+                    <select name="OrderType" id="ordertype" class="form-control" >
+                        <option value="book">Sách/ Tài liệu</option>
+                    </select>
+                </div>
 
-<div class="table-responsive">
-    <form action="/Home/CreatePaymentUrl" id="frmCreateOrder" method="POST">
-        <div class="form-group">
-            <label for="ordertype">Loại hàng hóa </label>
-            <select name="OrderType" id="ordertype" class="form-control">
-                <option value="electric">Đồ điện tử</option>
-                <option value="fashion">Thời trang</option>
-                <option value="other">Khác</option>
-            </select>
+                <!-- Tên khách hàng -->
+                <div class="form-group mb-4">
+                    <label for="Name" class="fw-bold">Tên khách hàng</label>
+                    <input class="form-control"
+                           id="Name"
+                           name="Name"
+                           type="text"
+                           value="@ViewBag.CustomerName"
+                           >
+                </div>
+
+                <!-- Số tiền (hiển thị định dạng tiền tệ) -->
+                <div class="form-group mb-4">
+                    <label for="Amount" class="fw-bold">Số tiền</label>
+                    <input class="form-control" id="Amount" name="Amount" type="text"
+                           value="@String.Format("{0:N0}", ViewBag.Amount)"
+                           oninput="formatCurrency(this)">
+                </div>
+
+                <!-- Nội dung thanh toán -->
+                <div class="form-group mb-4">
+                    <label for="OrderDescription" class="fw-bold">Nội dung thanh toán</label>
+                    <textarea class="form-control"
+                              id="OrderDescription"
+                              name="OrderDescription"
+                              rows="2"
+                             >@ViewBag.Description</textarea>
+                </div>
+
+                <!-- Nút tiến hành thanh toán -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger btn-lg px-5 fw-bold">Tiến hành thanh toán</button>
+                </div>
+            </form>
         </div>
-        <br/>
-        <div class="form-group">
-            <label for="Name">Tên khách hàng</label>
-            <input class="form-control"
-                   id="Name"
-                   name="Name"
-                   type="text"
-                   value="Code Mega">
-        </div>
-        <br/>
-        <div class="form-group">
-            <label for="Amount">Số tiền</label>
-            <input class="form-control"
-                   id="Amount"
-                   name="Amount"
-                   type="text"
-                   value="20000000">
-        </div>
-        <br/>
-        <div class="form-group">
-            <label for="OrderDescription">Nội dung thanh toán</label>
-            <textarea class="form-control" 
-                      cols="20" 
-                      id="OrderDescription" 
-                      name="OrderDescription" 
-                      rows="2">Thanh toán tại Code Mega</textarea>
-        </div>
-        <br/>
-        <button type="submit" class="btn btn-primary">Thanh toán (Checkout)</button>
-    </form>
+    </div>
 </div>

@@ -57,62 +57,57 @@ namespace Library_API.Controllers
 
                                 NguoiDung nd = new NguoiDung();
                                 nd.NdUsername = reader.GetValue(1)?.ToString() ?? string.Empty;
-                                nd.NdPassword = reader.GetValue(2)?.ToString() ?? string.Empty;
-                                nd.NdHoTen = reader.GetValue(3)?.ToString() ?? string.Empty;
-
-                                if (!reader.IsDBNull(4))
-                                {
-                                    // Chuyển đổi từ string sang DateTime và gán trực tiếp vào thuộc tính
-                                    nd.NdNgaySinh = DateTime.Parse(reader.GetValue(4).ToString());
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-
-                                nd.NdGioiTinh = reader.GetValue(5).ToString();
-                                nd.NdDiaChi = reader.GetValue(6).ToString();
+                                nd.NdCccd = reader.GetValue(2)?.ToString() ?? string.Empty;
+                                nd.NdSoDienThoai = reader.GetValue(3)?.ToString() ?? string.Empty;
+                                nd.NdHinhThe = reader.GetValue(4)?.ToString() ?? string.Empty;
+                                nd.NdPassword = reader.GetValue(5)?.ToString() ?? string.Empty;
+                                nd.NdHoTen = reader.GetValue(6)?.ToString() ?? string.Empty;
 
                                 if (!reader.IsDBNull(7))
                                 {
-                                    // Chuyển đổi từ string sang DateTime và gán trực tiếp vào thuộc tính
-                                    nd.NdNgayDangKy = DateTime.Parse(reader.GetValue(7).ToString());
+                                    nd.NdNgaySinh = DateTime.Parse(reader.GetValue(7).ToString());
+                                }
+
+                                nd.NdGioiTinh = reader.GetValue(8)?.ToString() ?? string.Empty;
+                                nd.NdEmail = reader.GetValue(9)?.ToString() ?? string.Empty;
+                                nd.NdDiaChi = reader.GetValue(10)?.ToString() ?? string.Empty;
+
+                                if (!reader.IsDBNull(11))
+                                {
+                                    nd.NdNgayDangKy = DateTime.Parse(reader.GetValue(11).ToString());
                                 }
                                 else
                                 {
                                     nd.NdNgayDangKy = DateTime.Now;
                                 }
-                                //
-                                if (!reader.IsDBNull(8))
+
+                                nd.NdThoiGianSuDung = reader.GetValue(12)?.ToString() ?? string.Empty;
+
+                                if (!reader.IsDBNull(13))
                                 {
-                                    // Chuyển đổi từ string sang kiểu boolean
-                                    nd.NdActive = Convert.ToBoolean(reader.GetValue(8));
+                                    nd.NdActive = Convert.ToBoolean(reader.GetValue(13));
                                 }
                                 else
                                 {
                                     nd.NdActive = true;
                                 }
 
+                                nd.QId = reader.GetValue(14)?.ToString() ?? "02";
 
-                                if (!reader.IsDBNull(9))
+                                if (!reader.IsDBNull(15))
                                 {
-                                    nd.QId = reader.GetValue(9).ToString();
+                                    nd.LndLoaiNguoiDung = Convert.ToInt32(reader.GetValue(15));
                                 }
                                 else
                                 {
-
-                                    nd.QId = "02";
+                                    nd.LndLoaiNguoiDung = 1; // Giá trị mặc định
                                 }
-
-                                nd.NdEmail = reader.GetValue(10).ToString() ?? string.Empty;
 
                                 _libraryContext.Add(nd);
                                 _libraryContext.SaveChanges();
-
                             }
 
                         } while (reader.NextResult());
-
                     }
                 }
 
