@@ -59,6 +59,39 @@ namespace Library_API.Controllers
             return new JsonResult(numberOfBorrowReceipts);
         }
 
+
+        [HttpGet("CheckMuonOnl/{nd_Id}/{s_Id}")]
+        public JsonResult CheckMuonOnl(int nd_Id, int s_Id)
+        {
+            string query = @"
+                SELECT pmo.pmo_TrangThai
+                FROM dbo.PhieuMuonOnline pmo
+                INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
+                WHERE pmo.nd_Id = @nd_Id AND ctpmo.s_Id = @s_Id ";
+
+            string result = "không có kết quả trả về"; // Mặc định là "No" nếu không có kết quả trả về
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nd_Id", nd_Id);
+                    myCommand.Parameters.AddWithValue("@s_Id", s_Id);
+                    myCon.Open();
+                    object queryResult = myCommand.ExecuteScalar();
+                    if (queryResult != null)
+                    {
+                        result = queryResult.ToString(); 
+                    }
+                }
+            }
+
+            return new JsonResult(result);
+        }
+
+
     }
 
 
