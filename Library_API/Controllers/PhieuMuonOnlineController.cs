@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
+using Library_API.Dtos;
 
 
 namespace Library_API.Controllers
@@ -89,6 +90,58 @@ namespace Library_API.Controllers
             }
 
             return new JsonResult(result);
+        }
+
+        [HttpGet("{ndId}")]
+        public JsonResult Get(int ndId)
+        {
+            string query = @"
+    SELECT pmo.pmo_Id, pmo.nd_Id, pmo.pmo_NgayDat, pmo.pmo_HanTra, pmo_LoaiGiaoHang, pmo.pmo_TrangThai, 
+           pmo.pmo_PhuongThucThanhToan, pmo.dcgh_Id,
+           ctpmo.s_Id, ctpmo.ctpmo_SoLuongSachMuon, 
+           s.s_TenSach 
+    FROM dbo.PhieuMuonOnline pmo
+    INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
+    INNER JOIN dbo.Sach s ON ctpmo.s_Id = s.s_Id
+    WHERE pmo.nd_Id = @NdId
+";
+
+            List<QuanLyPhieuMuonOnl> quanLyPhieuMuonOnls = new List<QuanLyPhieuMuonOnl>();
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@NdId", ndId);
+                    myCon.Open();
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+
+                    while (myReader.Read())
+                    {
+                        QuanLyPhieuMuonOnl phieuMuonOnl = new QuanLyPhieuMuonOnl
+                        {
+                            PmoId = Convert.ToInt32(myReader["pmo_Id"]),
+                            NdId = myReader["nd_Id"] as int?,
+                            SId = myReader["s_Id"] as int?,
+                            TenSach = myReader["s_TenSach"].ToString(),
+                            SoLuongSach = Convert.ToInt32(myReader["ctpmo_SoLuongSachMuon"]),
+                            PmoNgayDat = myReader["pmo_NgayDat"] as DateTime?,
+                            HanTra = Convert.ToDateTime(myReader["pmo_HanTra"]), // Corrected here
+                            PmoTrangThai = myReader["pmo_TrangThai"].ToString(),
+                            PmoLoaiGiaoHang = myReader["pmo_LoaiGiaoHang"].ToString(),
+                            PmoPhuongThucThanhToan = myReader["pmo_PhuongThucThanhToan"].ToString(),
+                            DcghId = myReader["dcgh_Id"] as int?
+                        };
+                        quanLyPhieuMuonOnls.Add(phieuMuonOnl);
+                    }
+
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult(quanLyPhieuMuonOnls);
         }
 
 

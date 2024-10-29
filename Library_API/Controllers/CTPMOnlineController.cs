@@ -118,8 +118,8 @@ namespace Library_API.Controllers
 
             string query = @"
         INSERT INTO dbo.PhieuMuonOnline
-        (nd_Id, pmo_NgayDat, pmo_LoaiGiaoHang, pmo_PhuongThucThanhToan, dcgh_Id, pmo_TrangThai)
-        VALUES (@nd_Id, @pmo_NgayDat, @pmo_LoaiGiaoHang, @pmo_PhuongThucThanhToan, @dcgh_Id, @pmo_TrangThai);
+        (nd_Id, pmo_NgayDat, pmo_HanTra, pmo_LoaiGiaoHang, pmo_PhuongThucThanhToan, dcgh_Id, pmo_TrangThai)
+        VALUES (@nd_Id, @pmo_NgayDat,@pmo_HanTra, @pmo_LoaiGiaoHang, @pmo_PhuongThucThanhToan, @dcgh_Id, @pmo_TrangThai);
         SELECT SCOPE_IDENTITY(); 
     ";
 
@@ -134,6 +134,7 @@ namespace Library_API.Controllers
                 {
                     myCommand.Parameters.AddWithValue("@nd_Id", pmo.NdId);
                     myCommand.Parameters.AddWithValue("@pmo_NgayDat", pmo.PmoNgayDat);
+                    myCommand.Parameters.AddWithValue("@pmo_HanTra", pmo.PmoNgayDat);
                     myCommand.Parameters.AddWithValue("@pmo_LoaiGiaoHang", pmo.PmoLoaiGiaoHang);
                     myCommand.Parameters.AddWithValue("@pmo_PhuongThucThanhToan", pmo.PmoPhuongThucThanhToan);
                     myCommand.Parameters.AddWithValue("@dcgh_Id", (object)pmo.DcghId ?? DBNull.Value); // Cho phép null nếu không có địa chỉ

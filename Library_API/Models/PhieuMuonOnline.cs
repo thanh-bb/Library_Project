@@ -19,7 +19,9 @@ public partial class PhieuMuonOnline
 
     public string? PmoTrangThai { get; set; }
 
-    public virtual ICollection<ChiTietPhieuMuonOnline> ChiTietPhieuMuonOnlines { get; set; } = new List<ChiTietPhieuMuonOnline>();
+    public DateTime? PmoHanTra { get; set; }
+
+    public virtual ICollection<ChiTietPhieuMuonOnline>? ChiTietPhieuMuonOnlines { get; set; } = new List<ChiTietPhieuMuonOnline>();
 
     public virtual DiaChiGiaoHang? Dcgh { get; set; }
 

@@ -493,6 +493,9 @@ public partial class OnlineLibraryContext : DbContext
             entity.Property(e => e.PmoId).HasColumnName("pmo_Id");
             entity.Property(e => e.DcghId).HasColumnName("dcgh_Id");
             entity.Property(e => e.NdId).HasColumnName("nd_Id");
+            entity.Property(e => e.PmoHanTra)
+                .HasColumnType("datetime")
+                .HasColumnName("pmo_HanTra");
             entity.Property(e => e.PmoLoaiGiaoHang)
                 .HasMaxLength(50)
                 .HasColumnName("pmo_LoaiGiaoHang");
