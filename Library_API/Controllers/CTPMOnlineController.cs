@@ -240,7 +240,57 @@ namespace Library_API.Controllers
                 myCon.Close();
             }
 
-            return new JsonResult("Thêm thành công");
+            return new JsonResult(newPmoId);
+        }
+
+
+        [HttpPut("TrangThaiThanhToan")]
+        public JsonResult TrangThaiThanhToan(ThanhToan tt)
+        {
+            string query = @"
+        UPDATE dbo.ThanhToan
+        SET tt_TrangThai = @tt_TrangThai
+        WHERE pmo_Id = @pmo_Id 
+        
+    ";
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                try
+                {
+                    myCon.Open();
+                    using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                    {
+                        myCommand.Parameters.AddWithValue("@pmo_Id", tt.PmoId);
+                        myCommand.Parameters.AddWithValue("@tt_TrangThai", tt.TtTrangThai);
+                      
+                        int rowsAffected = myCommand.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            return new JsonResult("Cập nhật trạng thái thanh toán thành công.");
+                        }
+                        else
+                        {
+                            return new JsonResult("Không tìm thấy phiếu mượn hoặc người dùng tương ứng để cập nhật.");
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return new JsonResult($"Lỗi khi thực hiện truy vấn SQL: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    return new JsonResult($"Lỗi khi cập nhật trạng thái thanh toán: {ex.Message}");
+                }
+                finally
+                {
+                    myCon.Close();
+                }
+            }
         }
 
     }
