@@ -134,7 +134,7 @@ namespace Library_API.Controllers
                 {
                     myCommand.Parameters.AddWithValue("@nd_Id", pmo.NdId);
                     myCommand.Parameters.AddWithValue("@pmo_NgayDat", pmo.PmoNgayDat);
-                    myCommand.Parameters.AddWithValue("@pmo_HanTra", pmo.PmoNgayDat);
+                    myCommand.Parameters.AddWithValue("@pmo_HanTra", pmo.PmoHanTra);
                     myCommand.Parameters.AddWithValue("@pmo_LoaiGiaoHang", pmo.PmoLoaiGiaoHang);
                     myCommand.Parameters.AddWithValue("@pmo_PhuongThucThanhToan", pmo.PmoPhuongThucThanhToan);
                     myCommand.Parameters.AddWithValue("@dcgh_Id", (object)pmo.DcghId ?? DBNull.Value); // Cho phép null nếu không có địa chỉ

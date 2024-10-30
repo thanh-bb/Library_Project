@@ -11,7 +11,7 @@ public partial class ChiTietPhieuTra
 
     public int? CtptSoLuongSachTra { get; set; }
 
-    public virtual PhieuTra Pt { get; set; } = null!;
+    public virtual PhieuTra? Pt { get; set; } = null!;
 
-    public virtual Sach SIdNavigation { get; set; } = null!;
+    public virtual Sach? SIdNavigation { get; set; } = null!;
 }

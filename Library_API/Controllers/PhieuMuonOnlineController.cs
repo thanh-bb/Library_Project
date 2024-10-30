@@ -9,7 +9,7 @@ using Library_API.Dtos;
 
 namespace Library_API.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class PhieuMuonOnlineController : ControllerBase
@@ -84,7 +84,7 @@ namespace Library_API.Controllers
                     object queryResult = myCommand.ExecuteScalar();
                     if (queryResult != null)
                     {
-                        result = queryResult.ToString(); 
+                        result = queryResult.ToString();
                     }
                 }
             }
@@ -96,15 +96,18 @@ namespace Library_API.Controllers
         public JsonResult Get(int ndId)
         {
             string query = @"
-    SELECT pmo.pmo_Id, pmo.nd_Id, pmo.pmo_NgayDat, pmo.pmo_HanTra, pmo_LoaiGiaoHang, pmo.pmo_TrangThai, 
-           pmo.pmo_PhuongThucThanhToan, pmo.dcgh_Id,
-           ctpmo.s_Id, ctpmo.ctpmo_SoLuongSachMuon, 
-           s.s_TenSach 
-    FROM dbo.PhieuMuonOnline pmo
-    INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
-    INNER JOIN dbo.Sach s ON ctpmo.s_Id = s.s_Id
-    WHERE pmo.nd_Id = @NdId
-";
+              SELECT DISTINCT pmo.pmo_Id, pmo.nd_Id, pmo.pmo_NgayDat, pmo.pmo_HanTra, pmo_LoaiGiaoHang, 
+               pmo.pmo_TrangThai, pmo.pmo_PhuongThucThanhToan, pmo.dcgh_Id,
+               ctpmo.s_Id, ctpmo.ctpmo_SoLuongSachMuon, 
+               s.s_TenSach, 
+               tt.tt_PhuongThuc, tt.tt_TrangThai, tt.tt_NgayThanhToan
+                FROM dbo.PhieuMuonOnline pmo
+                INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
+                INNER JOIN dbo.Sach s ON ctpmo.s_Id = s.s_Id
+                LEFT JOIN dbo.ThanhToan tt ON pmo.pmo_Id = tt.pmo_Id
+                WHERE pmo.nd_Id = @NdId
+
+    ";
 
             List<QuanLyPhieuMuonOnl> quanLyPhieuMuonOnls = new List<QuanLyPhieuMuonOnl>();
 
@@ -128,11 +131,15 @@ namespace Library_API.Controllers
                             TenSach = myReader["s_TenSach"].ToString(),
                             SoLuongSach = Convert.ToInt32(myReader["ctpmo_SoLuongSachMuon"]),
                             PmoNgayDat = myReader["pmo_NgayDat"] as DateTime?,
-                            HanTra = Convert.ToDateTime(myReader["pmo_HanTra"]), // Corrected here
+                            HanTra = Convert.ToDateTime(myReader["pmo_HanTra"]),
                             PmoTrangThai = myReader["pmo_TrangThai"].ToString(),
                             PmoLoaiGiaoHang = myReader["pmo_LoaiGiaoHang"].ToString(),
                             PmoPhuongThucThanhToan = myReader["pmo_PhuongThucThanhToan"].ToString(),
-                            DcghId = myReader["dcgh_Id"] as int?
+                            DcghId = myReader["dcgh_Id"] as int?,
+                            // Thông tin thanh toán
+                            TtPhuongThuc = myReader["tt_PhuongThuc"].ToString(),
+                            TtTrangThai = myReader["tt_TrangThai"].ToString(),
+                            TtNgayThanhToan = myReader["tt_NgayThanhToan"] as DateTime?
                         };
                         quanLyPhieuMuonOnls.Add(phieuMuonOnl);
                     }

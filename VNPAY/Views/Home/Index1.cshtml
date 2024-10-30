@@ -1,0 +1,61 @@
+﻿<!-- View - Hiển thị giao diện với định dạng số tiền -->
+@{
+    ViewData["Title"] = "Thanh toán VNPay";
+}
+
+<div class="container mt-5 w-50">
+    <div class="text-center">
+        <h2 class="fw-bold">
+            Thanh Toán VNPay
+            <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg" alt="VnPay Logo" style="width: 70px; vertical-align: middle; margin-left: 10px;">
+        </h2>
+    </div>
+
+    <div class="card my-4 shadow-lg p-4">
+        <div class="card-body">
+            <h2 class="card-title text-center text-primary fw-bold">Thông tin giao dịch</h2>
+            <form action="/Home/CreatePaymentUrl1" id="frmCreateOrder" method="POST">
+
+                <!-- Loại hàng hóa -->
+                <div class="form-group mb-4">
+                    <label for="ordertype" class="fw-bold">Tên sản phẩm</label>
+                    <select name="OrderType" id="ordertype" class="form-control">
+                        <option value="service">Gói dịch vụ đăng ký hội viên</option>
+                    </select>
+                </div>
+
+                <!-- Tên khách hàng -->
+                <div class="form-group mb-4">
+                    <label for="Name" class="fw-bold">Tên khách hàng</label>
+                    <input class="form-control"
+                           id="Name"
+                           name="Name"
+                           type="text"
+                           value="@ViewBag.CustomerName">
+                </div>
+
+                <!-- Số tiền (hiển thị định dạng tiền tệ) -->
+                <div class="form-group mb-4">
+                    <label for="Amount" class="fw-bold">Phí gói hội viên</label>
+                    <input class="form-control" id="Amount" name="Amount" type="text"
+                           value="@String.Format("{0:N0}", ViewBag.Amount)"
+                           oninput="formatCurrency(this)">
+                </div>
+
+                <!-- Nội dung thanh toán -->
+                <div class="form-group mb-4">
+                    <label for="OrderDescription" class="fw-bold">Nội dung thanh toán</label>
+                    <textarea class="form-control"
+                              id="OrderDescription"
+                              name="OrderDescription"
+                              rows="2">@ViewBag.Description</textarea>
+                </div>
+
+                <!-- Nút tiến hành thanh toán -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger btn-lg px-5 fw-bold">Tiến hành thanh toán</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

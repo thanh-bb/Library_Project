@@ -25,7 +25,11 @@
         public int SoLuongSach { get; set; }
         public DateTime HanTra { get; set; }
 
+        public string? TtPhuongThuc { get; set; }
 
+        public string? TtTrangThai { get; set; }
+
+        public DateTime? TtNgayThanhToan { get; set; }
 
     }
 }

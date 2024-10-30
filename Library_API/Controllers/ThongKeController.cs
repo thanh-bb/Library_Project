@@ -62,7 +62,7 @@ namespace Library_API.Controllers
                     SoLuongSachMuon = (int)g.Sum(ctpm => ctpm.CtpmSoLuongSachMuon)
                 })
                 .OrderByDescending(r => r.SoLuongSachMuon)
-                .Take(10) // Limit to top 10 readers
+                .Take(6) // Limit to top 10 readers
                 .ToListAsync();
 
             return Ok(result);
