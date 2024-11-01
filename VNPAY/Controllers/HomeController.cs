@@ -42,9 +42,8 @@ namespace VNPAY.Controllers
             var response = _vnPayService.PaymentExecute(Request.Query);
 
             // Tạo URL của frontend với kết quả
-            string frontendUrl = "http://localhost:3000/vnpay"; 
-            string queryString = $"?success={response.Success}&transactionId={response.TransactionId}&orderId={response.OrderId}";
-
+            string frontendUrl = "http://localhost:3000/vnpay";
+            string queryString = $"?success={response.Success}&transactionId={response.TransactionId}&orderId={response.OrderId}&amount={response.Amount}";
             // Chuyển hướng người dùng đến trang frontend kèm theo kết quả
             return Redirect(frontendUrl + queryString);
         }

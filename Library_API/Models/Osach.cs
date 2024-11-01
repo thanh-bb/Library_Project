@@ -9,5 +9,5 @@ public partial class Osach
 
     public string? OsTenO { get; set; }
 
-    public virtual ICollection<Sach> Saches { get; set; } = new List<Sach>();
+    public virtual ICollection<Sach>? Saches { get; set; } = new List<Sach>();
 }

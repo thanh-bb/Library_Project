@@ -204,7 +204,7 @@ namespace Library_API.Controllers
                 }
 
                 // Xử lý thanh toán dựa trên phương thức thanh toán
-                if (pmo.PmoPhuongThucThanhToan == "COD" || pmo.PmoPhuongThucThanhToan == "VNPAY")
+                if (pmo.PmoPhuongThucThanhToan == "COD" )
                 {
                     string thanhToanQuery = @"
                 INSERT INTO dbo.ThanhToan
@@ -216,11 +216,33 @@ namespace Library_API.Controllers
                     {
                         thanhToanCommand.Parameters.AddWithValue("@pmo_Id", newPmoId);
                         thanhToanCommand.Parameters.AddWithValue("@tt_PhuongThuc", pmo.PmoPhuongThucThanhToan);
-                        thanhToanCommand.Parameters.AddWithValue("@tt_TrangThai", "Chờ xác nhận");
+                        thanhToanCommand.Parameters.AddWithValue("@tt_TrangThai", "Chưa thanh toán (Thanh toán khi nhận hàng)");
                         thanhToanCommand.Parameters.AddWithValue("@tt_NgayThanhToan", DateTime.Now);
+
                         thanhToanCommand.ExecuteNonQuery();
                     }
                 }
+
+                // Xử lý thanh toán dựa trên phương thức thanh toán
+                if ( pmo.PmoPhuongThucThanhToan == "VNPAY")
+                {
+                    string thanhToanQuery = @"
+                INSERT INTO dbo.ThanhToan
+                (pmo_Id, tt_PhuongThuc, tt_TrangThai, tt_NgayThanhToan)
+                VALUES (@pmo_Id, @tt_PhuongThuc, @tt_TrangThai, @tt_NgayThanhToan)
+            ";
+
+                    using (SqlCommand thanhToanCommand = new SqlCommand(thanhToanQuery, myCon))
+                    {
+                        thanhToanCommand.Parameters.AddWithValue("@pmo_Id", newPmoId);
+                        thanhToanCommand.Parameters.AddWithValue("@tt_PhuongThuc", pmo.PmoPhuongThucThanhToan);
+                        thanhToanCommand.Parameters.AddWithValue("@tt_TrangThai", "Chờ thanh toán");
+                        thanhToanCommand.Parameters.AddWithValue("@tt_NgayThanhToan", DateTime.Now);
+
+                        thanhToanCommand.ExecuteNonQuery();
+                    }
+                }
+
 
                 // Xóa các mục trong giỏ hàng của người dùng đã có trong ChiTietPhieuMuonOnlines
                 foreach (var cto in pmo.ChiTietPhieuMuonOnlines)
@@ -249,9 +271,10 @@ namespace Library_API.Controllers
         public JsonResult TrangThaiThanhToan(ThanhToan tt)
         {
             string query = @"
-        UPDATE dbo.ThanhToan
-        SET tt_TrangThai = @tt_TrangThai
-        WHERE pmo_Id = @pmo_Id 
+             UPDATE dbo.ThanhToan
+            SET tt_TrangThai = @tt_TrangThai, tt_SoTien = @tt_SoTien
+            WHERE pmo_Id = @pmo_Id;
+ 
         
     ";
 
@@ -266,7 +289,9 @@ namespace Library_API.Controllers
                     {
                         myCommand.Parameters.AddWithValue("@pmo_Id", tt.PmoId);
                         myCommand.Parameters.AddWithValue("@tt_TrangThai", tt.TtTrangThai);
-                      
+                        myCommand.Parameters.AddWithValue("@tt_SoTien", tt.TtSoTien);
+
+
                         int rowsAffected = myCommand.ExecuteNonQuery();
 
                         if (rowsAffected > 0)

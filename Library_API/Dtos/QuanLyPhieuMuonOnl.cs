@@ -31,5 +31,7 @@
 
         public DateTime? TtNgayThanhToan { get; set; }
 
+        public double? TtSoTien { get; set; }
+
     }
 }

@@ -15,5 +15,7 @@ public partial class ThanhToan
 
     public DateTime? TtNgayThanhToan { get; set; }
 
+    public double? TtSoTien { get; set; }
+
     public virtual PhieuMuonOnline? Pmo { get; set; }
 }

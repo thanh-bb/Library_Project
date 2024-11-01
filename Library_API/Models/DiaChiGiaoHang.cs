@@ -17,5 +17,5 @@ public partial class DiaChiGiaoHang
 
     public virtual NguoiDung? Nd { get; set; }
 
-    public virtual ICollection<PhieuMuonOnline> PhieuMuonOnlines { get; set; } = new List<PhieuMuonOnline>();
+    public virtual ICollection<PhieuMuonOnline>? PhieuMuonOnlines { get; set; } = new List<PhieuMuonOnline>();
 }

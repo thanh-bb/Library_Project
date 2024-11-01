@@ -71,6 +71,12 @@ namespace VNPAY.Services
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
+            // Convert the vnp_Amount back to the original value by dividing by 100
+            if (collections.ContainsKey("vnp_Amount"))
+            {
+                response.Amount = decimal.Parse(collections["vnp_Amount"]) / 100;
+            }
+
             return response;
         }
 

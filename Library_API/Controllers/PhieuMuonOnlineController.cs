@@ -100,7 +100,7 @@ namespace Library_API.Controllers
                pmo.pmo_TrangThai, pmo.pmo_PhuongThucThanhToan, pmo.dcgh_Id,
                ctpmo.s_Id, ctpmo.ctpmo_SoLuongSachMuon, 
                s.s_TenSach, 
-               tt.tt_PhuongThuc, tt.tt_TrangThai, tt.tt_NgayThanhToan
+               tt.tt_PhuongThuc, tt.tt_TrangThai, tt.tt_NgayThanhToan, tt.tt_SoTien
                 FROM dbo.PhieuMuonOnline pmo
                 INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
                 INNER JOIN dbo.Sach s ON ctpmo.s_Id = s.s_Id
@@ -139,7 +139,8 @@ namespace Library_API.Controllers
                             // Thông tin thanh toán
                             TtPhuongThuc = myReader["tt_PhuongThuc"].ToString(),
                             TtTrangThai = myReader["tt_TrangThai"].ToString(),
-                            TtNgayThanhToan = myReader["tt_NgayThanhToan"] as DateTime?
+                            TtNgayThanhToan = myReader["tt_NgayThanhToan"] as DateTime?,
+                           
                         };
                         quanLyPhieuMuonOnls.Add(phieuMuonOnl);
                     }

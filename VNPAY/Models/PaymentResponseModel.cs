@@ -11,5 +11,8 @@
         public string Token { get; set; }
         public string VnPayResponseCode { get; set; }
 
+        // Khai báo thuộc tính Amount
+        public decimal Amount { get; set; } // Hoặc sử dụng double nếu cần
     }
+
 }

@@ -17,7 +17,7 @@ public partial class PhieuTraOnline
 
     public string? PtoTrangThai { get; set; }
 
-    public virtual ICollection<ChiTietPhieuTraOnline> ChiTietPhieuTraOnlines { get; set; } = new List<ChiTietPhieuTraOnline>();
+    public virtual ICollection<ChiTietPhieuTraOnline>? ChiTietPhieuTraOnlines { get; set; } = new List<ChiTietPhieuTraOnline>();
 
     public virtual NguoiDung? Nd { get; set; }
 
