@@ -1,9 +1,15 @@
-﻿using Library_API.Models;
+﻿using Library_API.Helpers;
+using Library_API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+
+
 namespace Library_API.Controllers
+
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -204,12 +210,12 @@ namespace Library_API.Controllers
                 }
 
                 // Xử lý thanh toán dựa trên phương thức thanh toán
-                if (pmo.PmoPhuongThucThanhToan == "COD" )
+                if (pmo.PmoPhuongThucThanhToan == "COD")
                 {
                     string thanhToanQuery = @"
                 INSERT INTO dbo.ThanhToan
-                (pmo_Id, tt_PhuongThuc, tt_TrangThai, tt_NgayThanhToan)
-                VALUES (@pmo_Id, @tt_PhuongThuc, @tt_TrangThai, @tt_NgayThanhToan)
+                (pmo_Id, tt_PhuongThuc, tt_TrangThai, tt_NgayThanhToan, tt_SoTien)
+                VALUES (@pmo_Id, @tt_PhuongThuc, @tt_TrangThai, @tt_NgayThanhToan, @tt_SoTien)
             ";
 
                     using (SqlCommand thanhToanCommand = new SqlCommand(thanhToanQuery, myCon))
@@ -218,18 +224,19 @@ namespace Library_API.Controllers
                         thanhToanCommand.Parameters.AddWithValue("@tt_PhuongThuc", pmo.PmoPhuongThucThanhToan);
                         thanhToanCommand.Parameters.AddWithValue("@tt_TrangThai", "Chưa thanh toán (Thanh toán khi nhận hàng)");
                         thanhToanCommand.Parameters.AddWithValue("@tt_NgayThanhToan", DateTime.Now);
+                        thanhToanCommand.Parameters.AddWithValue("@tt_SoTien", 30000);
 
                         thanhToanCommand.ExecuteNonQuery();
                     }
                 }
 
                 // Xử lý thanh toán dựa trên phương thức thanh toán
-                if ( pmo.PmoPhuongThucThanhToan == "VNPAY")
+                if (pmo.PmoPhuongThucThanhToan == "VNPAY")
                 {
                     string thanhToanQuery = @"
                 INSERT INTO dbo.ThanhToan
-                (pmo_Id, tt_PhuongThuc, tt_TrangThai, tt_NgayThanhToan)
-                VALUES (@pmo_Id, @tt_PhuongThuc, @tt_TrangThai, @tt_NgayThanhToan)
+                (pmo_Id, tt_PhuongThuc, tt_TrangThai, tt_NgayThanhToan, tt_SoTien)
+                VALUES (@pmo_Id, @tt_PhuongThuc, @tt_TrangThai, @tt_NgayThanhToan, @tt_SoTien)
             ";
 
                     using (SqlCommand thanhToanCommand = new SqlCommand(thanhToanQuery, myCon))
@@ -238,8 +245,22 @@ namespace Library_API.Controllers
                         thanhToanCommand.Parameters.AddWithValue("@tt_PhuongThuc", pmo.PmoPhuongThucThanhToan);
                         thanhToanCommand.Parameters.AddWithValue("@tt_TrangThai", "Chờ thanh toán");
                         thanhToanCommand.Parameters.AddWithValue("@tt_NgayThanhToan", DateTime.Now);
+                        thanhToanCommand.Parameters.AddWithValue("@tt_SoTien", 30000);
 
                         thanhToanCommand.ExecuteNonQuery();
+                    }
+
+                    // Cập nhật trạng thái của Phiếu mượn online thành "Đơn hàng đã được tạo"
+                    string updatePmoTrangThaiQuery = @"
+                     UPDATE dbo.PhieuMuonOnline
+                     SET pmo_TrangThai = N'Đơn hàng đã được tạo'
+                         WHERE pmo_Id = @pmo_Id
+    ";
+
+                    using (SqlCommand updatePmoTrangThaiCommand = new SqlCommand(updatePmoTrangThaiQuery, myCon))
+                    {
+                        updatePmoTrangThaiCommand.Parameters.AddWithValue("@pmo_Id", newPmoId);
+                        updatePmoTrangThaiCommand.ExecuteNonQuery();
                     }
                 }
 
@@ -315,6 +336,56 @@ namespace Library_API.Controllers
                 finally
                 {
                     myCon.Close();
+                }
+            }
+        }
+
+
+
+        [HttpPut("CapNhatTrangThaiQuaHan")]
+        public IActionResult CapNhatTrangThaiQuaHan()
+        {
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection connection = new SqlConnection(sqlDataSource))
+            {
+                connection.Open();
+
+                // Lấy các phiếu mượn có trạng thái "Chờ nhận sách"
+                string getOrdersQuery = "SELECT pmo_Id, pmo_NgayDat FROM dbo.PhieuMuonOnline WHERE pmo_TrangThai = N'Chờ nhận sách';";
+                var overdueIds = new List<int>();
+
+                using (SqlCommand getOrdersCommand = new SqlCommand(getOrdersQuery, connection))
+                using (SqlDataReader reader = getOrdersCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int orderId = reader.GetInt32(0);
+                        DateTime orderDate = reader.GetDateTime(1);
+
+                        // Tính số giờ làm việc giữa ngày đặt và ngày hiện tại
+                        int workingHours = DateHelper.CalculateWorkingHours(orderDate, DateTime.Now);
+
+                        if (workingHours > 48)
+                        {
+                            overdueIds.Add(orderId);
+                        }
+                    }
+                }
+
+                // Cập nhật trạng thái cho các phiếu mượn quá hạn
+                if (overdueIds.Any())
+                {
+                    string updateQuery = "UPDATE dbo.PhieuMuonOnline SET pmo_TrangThai = N'Quá hạn nhận sách' WHERE pmo_Id IN (" + string.Join(",", overdueIds) + ")";
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.ExecuteNonQuery();
+                    }
+                    return Ok("Cập nhật trạng thái quá hạn thành công.");
+                }
+                else
+                {
+                    return Ok("Không có đơn hàng nào cần cập nhật.");
                 }
             }
         }

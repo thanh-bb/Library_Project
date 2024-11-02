@@ -77,7 +77,7 @@ namespace VNPAY.Controllers
 
             // Tạo URL của frontend với kết quả
             string frontendUrl = "http://localhost:3000/VnpayForSignUp";
-            string queryString = $"?success={response.Success}&transactionId={response.TransactionId}&orderId={response.OrderId}";
+            string queryString = $"?success={response.Success}&transactionId={response.TransactionId}&orderId={response.OrderId}&amount={response.Amount}";
 
             // Chuyển hướng người dùng đến trang frontend kèm theo kết quả
             return Redirect(frontendUrl + queryString);

@@ -140,8 +140,9 @@ namespace Library_API.Controllers
                             TtPhuongThuc = myReader["tt_PhuongThuc"].ToString(),
                             TtTrangThai = myReader["tt_TrangThai"].ToString(),
                             TtNgayThanhToan = myReader["tt_NgayThanhToan"] as DateTime?,
-                           
-                        };
+                            TtSoTien = myReader["tt_SoTien"] != DBNull.Value ? Convert.ToDouble(myReader["tt_SoTien"]) : (double?)null
+
+                    };
                         quanLyPhieuMuonOnls.Add(phieuMuonOnl);
                     }
 
