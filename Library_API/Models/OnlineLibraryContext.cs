@@ -404,6 +404,7 @@ public partial class OnlineLibraryContext : DbContext
             entity.Property(e => e.NddkSoDienThoai)
                 .HasMaxLength(20)
                 .HasColumnName("nddk_SoDienThoai");
+            entity.Property(e => e.NddkSoTien).HasColumnName("nddk_SoTien");
             entity.Property(e => e.NddkThoiGianSuDung)
                 .HasMaxLength(100)
                 .HasColumnName("nddk_ThoiGianSuDung");

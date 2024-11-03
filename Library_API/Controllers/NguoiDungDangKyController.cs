@@ -113,11 +113,12 @@ namespace Library_API.Controllers
                             (@nddk_HoTen, @nddk_CCCD, @nddk_CCCD_MatTruoc, @nddk_CCCD_MatSau, @nddk_HinhThe,
                             @nddk_NgaySinh, @nddk_GioiTinh, @nddk_Email,@nddk_SoDienThoai, @nddk_DiaChi, @nddk_NgayDangKy, 
                             @nddk_ThoiGianSuDung, @nddk_HinhThucTraPhi, @nddk_TrangThaiThanhToan, @nddk_TrangThaiDuyet)
-                            ";
-
+                            SELECT SCOPE_IDENTITY(); 
+";
+            int newNddkId;
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
-            SqlDataReader myReader;
+        //    SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
                 myCon.Open();
@@ -139,14 +140,17 @@ namespace Library_API.Controllers
                     myCommand.Parameters.AddWithValue("@nddk_TrangThaiThanhToan", nddk.NddkTrangThaiThanhToan);
                     myCommand.Parameters.AddWithValue("@nddk_TrangThaiDuyet", nddk.NddkTrangThaiDuyet);
 
+                    newNddkId = Convert.ToInt32(myCommand.ExecuteScalar());
 
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
+
+                    //myReader = myCommand.ExecuteReader();
+                    //table.Load(myReader);
+                    //myReader.Close();
+                 
+                } 
+                myCon.Close();
             }
-            return new JsonResult("Thêm người dùng đăng ký thành công");
+            return new JsonResult(newNddkId);
         }
 
         //[Route("SaveFile")]
@@ -218,6 +222,38 @@ namespace Library_API.Controllers
                 {
                     myCommand.Parameters.AddWithValue("@nddk_Id", nddk.NddkId);
                     myCommand.Parameters.AddWithValue("@nddk_TrangThaiDuyet", nddk.NddkTrangThaiDuyet);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+
+        [HttpPut("UpdateTrangThaiThanhToan")]
+        public JsonResult UpdateTrangThaiThanhToan(NguoiDungDangKy nddk)
+        {
+            string query = @"
+                            update dbo.NguoiDungDangKy
+                            set nddk_TrangThaiThanhToan = @nddk_TrangThaiThanhToan ,nddk_SoTien = @nddk_SoTien
+                               WHERE nddk_Id = @nddk_Id;
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nddk_Id", nddk.NddkId);
+                    myCommand.Parameters.AddWithValue("@nddk_TrangThaiThanhToan", nddk.NddkTrangThaiThanhToan);
+                    myCommand.Parameters.AddWithValue("@nddk_SoTien", nddk.NddkSoTien);
+
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();

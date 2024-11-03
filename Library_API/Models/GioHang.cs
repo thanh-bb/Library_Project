@@ -9,7 +9,7 @@ public partial class GioHang
 
     public int? NdId { get; set; }
 
-    public virtual ICollection<ChiTietGioHang>? ChiTietGioHangs { get; set; } = new List<ChiTietGioHang>();
+    public virtual ICollection<ChiTietGioHang> ChiTietGioHangs { get; set; } = new List<ChiTietGioHang>();
 
     public virtual NguoiDung? Nd { get; set; }
 }

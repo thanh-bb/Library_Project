@@ -37,21 +37,21 @@ public partial class NguoiDung
 
     public int? LndLoaiNguoiDung { get; set; }
 
-    public virtual ICollection<BinhLuan>? BinhLuans { get; set; } = new List<BinhLuan>();
+    public virtual ICollection<BinhLuan> BinhLuans { get; set; } = new List<BinhLuan>();
 
-    public virtual ICollection<DiaChiGiaoHang>? DiaChiGiaoHangs { get; set; } = new List<DiaChiGiaoHang>();
+    public virtual ICollection<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; } = new List<DiaChiGiaoHang>();
 
-    public virtual ICollection<GioHang>? GioHangs { get; set; } = new List<GioHang>();
+    public virtual ICollection<GioHang> GioHangs { get; set; } = new List<GioHang>();
 
     public virtual LoaiNguoiDung? LndLoaiNguoiDungNavigation { get; set; }
 
-    public virtual ICollection<PhieuMuonOnline>? PhieuMuonOnlines { get; set; } = new List<PhieuMuonOnline>();
+    public virtual ICollection<PhieuMuonOnline> PhieuMuonOnlines { get; set; } = new List<PhieuMuonOnline>();
 
-    public virtual ICollection<PhieuMuon>? PhieuMuons { get; set; } = new List<PhieuMuon>();
+    public virtual ICollection<PhieuMuon> PhieuMuons { get; set; } = new List<PhieuMuon>();
 
-    public virtual ICollection<PhieuTraOnline>? PhieuTraOnlines { get; set; } = new List<PhieuTraOnline>();
+    public virtual ICollection<PhieuTraOnline> PhieuTraOnlines { get; set; } = new List<PhieuTraOnline>();
 
-    public virtual ICollection<PhieuTra>? PhieuTras { get; set; } = new List<PhieuTra>();
+    public virtual ICollection<PhieuTra> PhieuTras { get; set; } = new List<PhieuTra>();
 
     public virtual Quyen? QIdNavigation { get; set; }
 }

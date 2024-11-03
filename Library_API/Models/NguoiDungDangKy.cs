@@ -36,4 +36,6 @@ public partial class NguoiDungDangKy
     public string? NddkTrangThaiThanhToan { get; set; }
 
     public string? NddkTrangThaiDuyet { get; set; }
+
+    public double? NddkSoTien { get; set; }
 }
