@@ -142,7 +142,7 @@ namespace Library_API.Controllers
                             TtNgayThanhToan = myReader["tt_NgayThanhToan"] as DateTime?,
                             TtSoTien = myReader["tt_SoTien"] != DBNull.Value ? Convert.ToDouble(myReader["tt_SoTien"]) : (double?)null
 
-                    };
+                        };
                         quanLyPhieuMuonOnls.Add(phieuMuonOnl);
                     }
 
@@ -154,7 +154,59 @@ namespace Library_API.Controllers
         }
 
 
-    }
+        [HttpGet("QLPMO")]
+        public JsonResult QLPMO()
+        {
+            string query = @"
+        SELECT DISTINCT pmo.pmo_Id, pmo.nd_Id, pmo.pmo_NgayDat, pmo.pmo_HanTra, pmo_LoaiGiaoHang, 
+           pmo.pmo_TrangThai, pmo.pmo_PhuongThucThanhToan, pmo.dcgh_Id,
+           ctpmo.s_Id, ctpmo.ctpmo_SoLuongSachMuon, 
+           s.s_TenSach
+           FROM dbo.PhieuMuonOnline pmo
+        INNER JOIN dbo.ChiTietPhieuMuonOnline ctpmo ON pmo.pmo_Id = ctpmo.pmo_Id
+        INNER JOIN dbo.Sach s ON ctpmo.s_Id = s.s_Id
+    ";
+
+            List<QuanLyPhieuMuonOnl> quanLyPhieuMuonOnls = new List<QuanLyPhieuMuonOnl>();
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCon.Open();
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+
+                    while (myReader.Read())
+                    {
+                        QuanLyPhieuMuonOnl phieuMuonOnl = new QuanLyPhieuMuonOnl
+                        {
+                            PmoId = Convert.ToInt32(myReader["pmo_Id"]),
+                            NdId = myReader["nd_Id"] as int?,
+                            SId = myReader["s_Id"] as int?,
+                            TenSach = myReader["s_TenSach"].ToString(),
+                            SoLuongSach = Convert.ToInt32(myReader["ctpmo_SoLuongSachMuon"]),
+                            PmoNgayDat = myReader["pmo_NgayDat"] as DateTime?,
+                            HanTra = Convert.ToDateTime(myReader["pmo_HanTra"]),
+                            PmoTrangThai = myReader["pmo_TrangThai"].ToString(),
+                            PmoLoaiGiaoHang = myReader["pmo_LoaiGiaoHang"].ToString(),
+                            PmoPhuongThucThanhToan = myReader["pmo_PhuongThucThanhToan"].ToString(),
+                            DcghId = myReader["dcgh_Id"] as int?
+                        };
+                        quanLyPhieuMuonOnls.Add(phieuMuonOnl);
+                    }
+
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult(quanLyPhieuMuonOnls);
+        }
 
 
-}
+
+    } }
+
+
+

@@ -11,7 +11,7 @@ public partial class ChiTietPhieuMuon
 
     public int? CtpmSoLuongSachMuon { get; set; }
 
-    public virtual PhieuMuon Pm { get; set; } = null!;
+    public virtual PhieuMuon? Pm { get; set; } = null!;
 
-    public virtual Sach SIdNavigation { get; set; } = null!;
+    public virtual Sach? SIdNavigation { get; set; } = null!;
 }

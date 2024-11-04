@@ -21,13 +21,13 @@ public partial class PhieuMuonOnline
 
     public string? PmoTrangThai { get; set; }
 
-    public virtual ICollection<ChiTietPhieuMuonOnline> ChiTietPhieuMuonOnlines { get; set; } = new List<ChiTietPhieuMuonOnline>();
+    public virtual ICollection<ChiTietPhieuMuonOnline>? ChiTietPhieuMuonOnlines { get; set; } = new List<ChiTietPhieuMuonOnline>();
 
     public virtual DiaChiGiaoHang? Dcgh { get; set; }
 
     public virtual NguoiDung? Nd { get; set; }
 
-    public virtual ICollection<PhieuTraOnline> PhieuTraOnlines { get; set; } = new List<PhieuTraOnline>();
+    public virtual ICollection<PhieuTraOnline>? PhieuTraOnlines { get; set; } = new List<PhieuTraOnline>();
 
-    public virtual ICollection<ThanhToan> ThanhToans { get; set; } = new List<ThanhToan>();
+    public virtual ICollection<ThanhToan>? ThanhToans { get; set; } = new List<ThanhToan>();
 }
