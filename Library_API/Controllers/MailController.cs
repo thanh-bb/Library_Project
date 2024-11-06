@@ -21,38 +21,38 @@ namespace Library_API.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpPost("SendEmail")]
-        public async Task<IActionResult> SendMail()
-        {
-            try
-            {
+        //[HttpPost("SendEmail")]
+        //public async Task<IActionResult> SendMail()
+        //{
+        //    try
+        //    {
 
-                var overdueUsers = await _dbContext.NguoiDungs
-                   .Join(_dbContext.PhieuMuons,
-                    nd => nd.NdId,
-                    pm => pm.NdId,
-                    (nd, pm) => new { User = nd, PM = pm })
-                    .Where(x => x.PM.PmTrangThaiMuon == "Đang mượn" && x.PM.PmHanTra < DateTime.Today)
-                    .Select(x => x.User.NdEmail)
-                    .ToListAsync();
+        //        var overdueUsers = await _dbContext.NguoiDungs
+        //           .Join(_dbContext.PhieuMuons,
+        //            nd => nd.NdId,
+        //            pm => pm.NdId,
+        //            (nd, pm) => new { User = nd, PM = pm })
+        //            .Where(x => x.PM.PmTrangThaiMuon == "Đang mượn" && x.PM.PmHanTra < DateTime.Today)
+        //            .Select(x => x.User.NdEmail)
+        //            .ToListAsync();
 
 
-                foreach (var email in overdueUsers)
-                {
-                    Mailrequest mailrequest = new Mailrequest();
-                    mailrequest.ToEmail = email;
-                    mailrequest.Subject = "Thông báo quá hạn trả sách";
-                    mailrequest.Body = GetHtmlcontent();
+        //        foreach (var email in overdueUsers)
+        //        {
+        //            Mailrequest mailrequest = new Mailrequest();
+        //            mailrequest.ToEmail = email;
+        //            mailrequest.Subject = "Thông báo quá hạn trả sách";
+        //            mailrequest.Body = GetHtmlcontent();
 
-                    await _emailService.SendEmailAsync(mailrequest);
-                }
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //            await _emailService.SendEmailAsync(mailrequest);
+        //        }
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
         private string GetHtmlcontent()
         {

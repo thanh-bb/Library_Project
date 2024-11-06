@@ -15,21 +15,13 @@ public partial class OnlineLibraryContext : DbContext
     {
     }
 
-    public virtual DbSet<BinhLuan> BinhLuans { get; set; }
-
     public virtual DbSet<ChiTietGioHang> ChiTietGioHangs { get; set; }
 
     public virtual DbSet<ChiTietPhieuMuon> ChiTietPhieuMuons { get; set; }
 
-    public virtual DbSet<ChiTietPhieuMuonOnline> ChiTietPhieuMuonOnlines { get; set; }
-
     public virtual DbSet<ChiTietPhieuTra> ChiTietPhieuTras { get; set; }
 
-    public virtual DbSet<ChiTietPhieuTraOnline> ChiTietPhieuTraOnlines { get; set; }
-
     public virtual DbSet<DanhMuc> DanhMucs { get; set; }
-
-    public virtual DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
 
     public virtual DbSet<GioHang> GioHangs { get; set; }
 
@@ -53,11 +45,7 @@ public partial class OnlineLibraryContext : DbContext
 
     public virtual DbSet<PhieuMuon> PhieuMuons { get; set; }
 
-    public virtual DbSet<PhieuMuonOnline> PhieuMuonOnlines { get; set; }
-
     public virtual DbSet<PhieuTra> PhieuTras { get; set; }
-
-    public virtual DbSet<PhieuTraOnline> PhieuTraOnlines { get; set; }
 
     public virtual DbSet<Quyen> Quyens { get; set; }
 
@@ -67,9 +55,9 @@ public partial class OnlineLibraryContext : DbContext
 
     public virtual DbSet<TacGium> TacGia { get; set; }
 
-    public virtual DbSet<ThanhToan> ThanhToans { get; set; }
-
     public virtual DbSet<TheLoai> TheLoais { get; set; }
+
+    public virtual DbSet<TrangThaiMuon> TrangThaiMuons { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -77,34 +65,9 @@ public partial class OnlineLibraryContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BinhLuan>(entity =>
-        {
-            entity.HasKey(e => e.BlId).HasName("PK__BinhLuan__86E4129248E10D1B");
-
-            entity.ToTable("BinhLuan");
-
-            entity.Property(e => e.BlId).HasColumnName("bl_Id");
-            entity.Property(e => e.BlNgayDang)
-                .HasColumnType("datetime")
-                .HasColumnName("bl_NgayDang");
-            entity.Property(e => e.BlNoiDung)
-                .HasMaxLength(500)
-                .HasColumnName("bl_NoiDung");
-            entity.Property(e => e.NdId).HasColumnName("nd_Id");
-            entity.Property(e => e.SId).HasColumnName("s_Id");
-
-            entity.HasOne(d => d.Nd).WithMany(p => p.BinhLuans)
-                .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__BinhLuan__nd_Id__2645B050");
-
-            entity.HasOne(d => d.SIdNavigation).WithMany(p => p.BinhLuans)
-                .HasForeignKey(d => d.SId)
-                .HasConstraintName("FK__BinhLuan__s_Id__2739D489");
-        });
-
         modelBuilder.Entity<ChiTietGioHang>(entity =>
         {
-            entity.HasKey(e => e.CtghId).HasName("PK__ChiTietG__0903B75DBCEEDDED");
+            entity.HasKey(e => e.CtghId).HasName("PK__ChiTietG__0903B75D9FDF5E7E");
 
             entity.ToTable("ChiTietGioHang");
 
@@ -115,16 +78,16 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Gh).WithMany(p => p.ChiTietGioHangs)
                 .HasForeignKey(d => d.GhId)
-                .HasConstraintName("FK__ChiTietGi__gh_Id__245D67DE");
+                .HasConstraintName("FK__ChiTietGi__gh_Id__5FB337D6");
 
             entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietGioHangs)
                 .HasForeignKey(d => d.SId)
-                .HasConstraintName("FK__ChiTietGio__s_Id__25518C17");
+                .HasConstraintName("FK__ChiTietGio__s_Id__60A75C0F");
         });
 
         modelBuilder.Entity<ChiTietPhieuMuon>(entity =>
         {
-            entity.HasKey(e => new { e.SId, e.PmId }).HasName("PK__ChiTietP__DD56A22A7406123A");
+            entity.HasKey(e => new { e.SId, e.PmId }).HasName("PK__ChiTietP__DD56A22A8B27F943");
 
             entity.ToTable("ChiTietPhieuMuon");
 
@@ -135,38 +98,17 @@ public partial class OnlineLibraryContext : DbContext
             entity.HasOne(d => d.Pm).WithMany(p => p.ChiTietPhieuMuons)
                 .HasForeignKey(d => d.PmId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPh__pm_Id__151B244E");
+                .HasConstraintName("FK__ChiTietPh__pm_Id__5070F446");
 
             entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietPhieuMuons)
                 .HasForeignKey(d => d.SId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPhi__s_Id__14270015");
-        });
-
-        modelBuilder.Entity<ChiTietPhieuMuonOnline>(entity =>
-        {
-            entity.HasKey(e => new { e.PmoId, e.SId }).HasName("PK__ChiTietP__126D038F44D5B1C9");
-
-            entity.ToTable("ChiTietPhieuMuonOnline");
-
-            entity.Property(e => e.PmoId).HasColumnName("pmo_Id");
-            entity.Property(e => e.SId).HasColumnName("s_Id");
-            entity.Property(e => e.CtpmoSoLuongSachMuon).HasColumnName("ctpmo_SoLuongSachMuon");
-
-            entity.HasOne(d => d.Pmo).WithMany(p => p.ChiTietPhieuMuonOnlines)
-                .HasForeignKey(d => d.PmoId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPh__pmo_I__2A164134");
-
-            entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietPhieuMuonOnlines)
-                .HasForeignKey(d => d.SId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPhi__s_Id__2B0A656D");
+                .HasConstraintName("FK__ChiTietPhi__s_Id__4F7CD00D");
         });
 
         modelBuilder.Entity<ChiTietPhieuTra>(entity =>
         {
-            entity.HasKey(e => new { e.SId, e.PtId }).HasName("PK__ChiTietP__BA5EB88837A3DB87");
+            entity.HasKey(e => new { e.SId, e.PtId }).HasName("PK__ChiTietP__BA5EB8880ED6B825");
 
             entity.ToTable("ChiTietPhieuTra");
 
@@ -177,37 +119,17 @@ public partial class OnlineLibraryContext : DbContext
             entity.HasOne(d => d.Pt).WithMany(p => p.ChiTietPhieuTras)
                 .HasForeignKey(d => d.PtId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPh__pt_Id__18EBB532");
+                .HasConstraintName("FK__ChiTietPh__pt_Id__5441852A");
 
             entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietPhieuTras)
                 .HasForeignKey(d => d.SId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietPhi__s_Id__17F790F9");
-        });
-
-        modelBuilder.Entity<ChiTietPhieuTraOnline>(entity =>
-        {
-            entity.HasKey(e => e.CtptoId).HasName("PK__ChiTietP__1AE7D792C9F0BDF7");
-
-            entity.ToTable("ChiTietPhieuTraOnline");
-
-            entity.Property(e => e.CtptoId).HasColumnName("ctpto_Id");
-            entity.Property(e => e.CtptoSoLuongSachTra).HasColumnName("ctpto_SoLuongSachTra");
-            entity.Property(e => e.PtoId).HasColumnName("pto_Id");
-            entity.Property(e => e.SId).HasColumnName("s_Id");
-
-            entity.HasOne(d => d.Pto).WithMany(p => p.ChiTietPhieuTraOnlines)
-                .HasForeignKey(d => d.PtoId)
-                .HasConstraintName("FK__ChiTietPh__pto_I__2EDAF651");
-
-            entity.HasOne(d => d.SIdNavigation).WithMany(p => p.ChiTietPhieuTraOnlines)
-                .HasForeignKey(d => d.SId)
-                .HasConstraintName("FK__ChiTietPhi__s_Id__2FCF1A8A");
+                .HasConstraintName("FK__ChiTietPhi__s_Id__534D60F1");
         });
 
         modelBuilder.Entity<DanhMuc>(entity =>
         {
-            entity.HasKey(e => e.DmId).HasName("PK__DanhMuc__561401822B387540");
+            entity.HasKey(e => e.DmId).HasName("PK__DanhMuc__56140182C0739657");
 
             entity.ToTable("DanhMuc");
 
@@ -217,32 +139,9 @@ public partial class OnlineLibraryContext : DbContext
                 .HasColumnName("dm_TenDanhMuc");
         });
 
-        modelBuilder.Entity<DiaChiGiaoHang>(entity =>
-        {
-            entity.HasKey(e => e.DcghId).HasName("PK__DiaChiGi__01730B869915417C");
-
-            entity.ToTable("DiaChiGiaoHang");
-
-            entity.Property(e => e.DcghId).HasColumnName("dcgh_Id");
-            entity.Property(e => e.DcghDiaChi)
-                .HasMaxLength(200)
-                .HasColumnName("dcgh_DiaChi");
-            entity.Property(e => e.DcghSoDienThoai)
-                .HasMaxLength(20)
-                .HasColumnName("dcgh_SoDienThoai");
-            entity.Property(e => e.DcghTenNguoiNhan)
-                .HasMaxLength(100)
-                .HasColumnName("dcgh_TenNguoiNhan");
-            entity.Property(e => e.NdId).HasColumnName("nd_Id");
-
-            entity.HasOne(d => d.Nd).WithMany(p => p.DiaChiGiaoHangs)
-                .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__DiaChiGia__nd_Id__30C33EC3");
-        });
-
         modelBuilder.Entity<GioHang>(entity =>
         {
-            entity.HasKey(e => e.GhId).HasName("PK__GioHang__B435E72B579E5C9B");
+            entity.HasKey(e => e.GhId).HasName("PK__GioHang__B435E72B0569C7E5");
 
             entity.ToTable("GioHang");
 
@@ -251,12 +150,12 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Nd).WithMany(p => p.GioHangs)
                 .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__GioHang__nd_Id__236943A5");
+                .HasConstraintName("FK__GioHang__nd_Id__5EBF139D");
         });
 
         modelBuilder.Entity<HinhMinhHoa>(entity =>
         {
-            entity.HasKey(e => e.HmhId).HasName("PK__HinhMinh__207A44E848DFA9D5");
+            entity.HasKey(e => e.HmhId).HasName("PK__HinhMinh__207A44E8ED082FAC");
 
             entity.ToTable("HinhMinhHoa");
 
@@ -266,12 +165,12 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.SIdNavigation).WithMany(p => p.HinhMinhHoas)
                 .HasForeignKey(d => d.SId)
-                .HasConstraintName("FK__HinhMinhHo__s_Id__22751F6C");
+                .HasConstraintName("FK__HinhMinhHo__s_Id__5DCAEF64");
         });
 
         modelBuilder.Entity<KeSach>(entity =>
         {
-            entity.HasKey(e => e.KsId).HasName("PK__KeSach__09A0E5C82F846DC8");
+            entity.HasKey(e => e.KsId).HasName("PK__KeSach__09A0E5C89D23381C");
 
             entity.ToTable("KeSach");
 
@@ -283,7 +182,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<LoaiNguoiDung>(entity =>
         {
-            entity.HasKey(e => e.LndId).HasName("PK__LoaiNguo__BD3502E32F935C48");
+            entity.HasKey(e => e.LndId).HasName("PK__LoaiNguo__BD3502E325E24BB5");
 
             entity.ToTable("LoaiNguoiDung");
 
@@ -295,7 +194,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<LoaiSach>(entity =>
         {
-            entity.HasKey(e => e.LsId).HasName("PK__LoaiSach__E0FFD76EB41357F5");
+            entity.HasKey(e => e.LsId).HasName("PK__LoaiSach__E0FFD76EDA1BCAA8");
 
             entity.ToTable("LoaiSach");
 
@@ -313,7 +212,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<NguoiDung>(entity =>
         {
-            entity.HasKey(e => e.NdId).HasName("PK__NguoiDun__3BE4FDC5FBE7DD7A");
+            entity.HasKey(e => e.NdId).HasName("PK__NguoiDun__3BE4FDC595AD59AB");
 
             entity.ToTable("NguoiDung");
 
@@ -360,16 +259,16 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.LndLoaiNguoiDungNavigation).WithMany(p => p.NguoiDungs)
                 .HasForeignKey(d => d.LndLoaiNguoiDung)
-                .HasConstraintName("FK__NguoiDung__lnd_L__1AD3FDA4");
+                .HasConstraintName("FK__NguoiDung__lnd_L__5629CD9C");
 
             entity.HasOne(d => d.QIdNavigation).WithMany(p => p.NguoiDungs)
                 .HasForeignKey(d => d.QId)
-                .HasConstraintName("FK__NguoiDung__q_Id__19DFD96B");
+                .HasConstraintName("FK__NguoiDung__q_Id__5535A963");
         });
 
         modelBuilder.Entity<NguoiDungDangKy>(entity =>
         {
-            entity.HasKey(e => e.NddkId).HasName("PK__NguoiDun__5AE7E2322E576627");
+            entity.HasKey(e => e.NddkId).HasName("PK__NguoiDun__5AE7E2328C42997A");
 
             entity.ToTable("NguoiDungDangKy");
 
@@ -404,7 +303,9 @@ public partial class OnlineLibraryContext : DbContext
             entity.Property(e => e.NddkSoDienThoai)
                 .HasMaxLength(20)
                 .HasColumnName("nddk_SoDienThoai");
-            entity.Property(e => e.NddkSoTien).HasColumnName("nddk_SoTien");
+            entity.Property(e => e.NddkSoTien)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("nddk_SoTien");
             entity.Property(e => e.NddkThoiGianSuDung)
                 .HasMaxLength(100)
                 .HasColumnName("nddk_ThoiGianSuDung");
@@ -418,7 +319,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<NhaXuatBan>(entity =>
         {
-            entity.HasKey(e => e.NxbId).HasName("PK__NhaXuatB__FDF00B9B3488A89E");
+            entity.HasKey(e => e.NxbId).HasName("PK__NhaXuatB__FDF00B9B16ABA06D");
 
             entity.ToTable("NhaXuatBan");
 
@@ -430,7 +331,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<Osach>(entity =>
         {
-            entity.HasKey(e => e.OsId).HasName("PK__OSach__3750B0BD6468C64F");
+            entity.HasKey(e => e.OsId).HasName("PK__OSach__3750B0BDA3566BD0");
 
             entity.ToTable("OSach");
 
@@ -442,7 +343,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<PhieuDongPhat>(entity =>
         {
-            entity.HasKey(e => e.PdpId).HasName("PK__PhieuDon__A65BF78E36ABF70A");
+            entity.HasKey(e => e.PdpId).HasName("PK__PhieuDon__A65BF78E25D47B94");
 
             entity.ToTable("PhieuDongPhat");
 
@@ -456,12 +357,12 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Pm).WithMany(p => p.PhieuDongPhats)
                 .HasForeignKey(d => d.PmId)
-                .HasConstraintName("FK__PhieuDong__pm_Id__1BC821DD");
+                .HasConstraintName("FK__PhieuDong__pm_Id__571DF1D5");
         });
 
         modelBuilder.Entity<PhieuMuon>(entity =>
         {
-            entity.HasKey(e => e.PmId).HasName("PK__PhieuMuo__26B01F6E81508F0B");
+            entity.HasKey(e => e.PmId).HasName("PK__PhieuMuo__26B01F6E362BEB56");
 
             entity.ToTable("PhieuMuon");
 
@@ -470,58 +371,29 @@ public partial class OnlineLibraryContext : DbContext
             entity.Property(e => e.PmHanTra)
                 .HasColumnType("datetime")
                 .HasColumnName("pm_HanTra");
+            entity.Property(e => e.PmLoaiMuon)
+                .HasMaxLength(50)
+                .HasColumnName("pm_LoaiMuon");
             entity.Property(e => e.PmNgayMuon)
                 .HasColumnType("datetime")
                 .HasColumnName("pm_NgayMuon");
-            entity.Property(e => e.PmTrangThaiMuon)
-                .HasMaxLength(150)
-                .HasColumnName("pm_TrangThaiMuon");
             entity.Property(e => e.PmTrangThaiXetDuyet)
                 .HasMaxLength(150)
                 .HasColumnName("pm_TrangThaiXetDuyet");
+            entity.Property(e => e.TtmId).HasColumnName("ttm_Id");
 
             entity.HasOne(d => d.Nd).WithMany(p => p.PhieuMuons)
                 .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__PhieuMuon__nd_Id__1332DBDC");
-        });
+                .HasConstraintName("FK__PhieuMuon__nd_Id__4D94879B");
 
-        modelBuilder.Entity<PhieuMuonOnline>(entity =>
-        {
-            entity.HasKey(e => e.PmoId).HasName("PK__PhieuMuo__C09ED9B2482096F9");
-
-            entity.ToTable("PhieuMuonOnline");
-
-            entity.Property(e => e.PmoId).HasColumnName("pmo_Id");
-            entity.Property(e => e.DcghId).HasColumnName("dcgh_Id");
-            entity.Property(e => e.NdId).HasColumnName("nd_Id");
-            entity.Property(e => e.PmoHanTra)
-                .HasColumnType("datetime")
-                .HasColumnName("pmo_HanTra");
-            entity.Property(e => e.PmoLoaiGiaoHang)
-                .HasMaxLength(50)
-                .HasColumnName("pmo_LoaiGiaoHang");
-            entity.Property(e => e.PmoNgayDat)
-                .HasColumnType("datetime")
-                .HasColumnName("pmo_NgayDat");
-            entity.Property(e => e.PmoPhuongThucThanhToan)
-                .HasMaxLength(50)
-                .HasColumnName("pmo_PhuongThucThanhToan");
-            entity.Property(e => e.PmoTrangThai)
-                .HasMaxLength(50)
-                .HasColumnName("pmo_TrangThai");
-
-            entity.HasOne(d => d.Dcgh).WithMany(p => p.PhieuMuonOnlines)
-                .HasForeignKey(d => d.DcghId)
-                .HasConstraintName("FK__PhieuMuon__dcgh___29221CFB");
-
-            entity.HasOne(d => d.Nd).WithMany(p => p.PhieuMuonOnlines)
-                .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__PhieuMuon__nd_Id__282DF8C2");
+            entity.HasOne(d => d.Ttm).WithMany(p => p.PhieuMuons)
+                .HasForeignKey(d => d.TtmId)
+                .HasConstraintName("FK__PhieuMuon__ttm_I__4E88ABD4");
         });
 
         modelBuilder.Entity<PhieuTra>(entity =>
         {
-            entity.HasKey(e => e.PtId).HasName("PK__PhieuTra__5631B548F34C0253");
+            entity.HasKey(e => e.PtId).HasName("PK__PhieuTra__5631B54807D4CF44");
 
             entity.ToTable("PhieuTra");
 
@@ -534,44 +406,16 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Nd).WithMany(p => p.PhieuTras)
                 .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__PhieuTra__nd_Id__160F4887");
+                .HasConstraintName("FK__PhieuTra__nd_Id__5165187F");
 
             entity.HasOne(d => d.Pm).WithMany(p => p.PhieuTras)
                 .HasForeignKey(d => d.PmId)
-                .HasConstraintName("FK__PhieuTra__pm_Id__17036CC0");
-        });
-
-        modelBuilder.Entity<PhieuTraOnline>(entity =>
-        {
-            entity.HasKey(e => e.PtoId).HasName("PK__PhieuTra__6856AD9DD9A509DF");
-
-            entity.ToTable("PhieuTraOnline");
-
-            entity.Property(e => e.PtoId).HasColumnName("pto_Id");
-            entity.Property(e => e.NdId).HasColumnName("nd_Id");
-            entity.Property(e => e.PmoId).HasColumnName("pmo_Id");
-            entity.Property(e => e.PtoHinhThucTra)
-                .HasMaxLength(50)
-                .HasColumnName("pto_HinhThucTra");
-            entity.Property(e => e.PtoNgayTra)
-                .HasColumnType("datetime")
-                .HasColumnName("pto_NgayTra");
-            entity.Property(e => e.PtoTrangThai)
-                .HasMaxLength(50)
-                .HasColumnName("pto_TrangThai");
-
-            entity.HasOne(d => d.Nd).WithMany(p => p.PhieuTraOnlines)
-                .HasForeignKey(d => d.NdId)
-                .HasConstraintName("FK__PhieuTraO__nd_Id__2DE6D218");
-
-            entity.HasOne(d => d.Pmo).WithMany(p => p.PhieuTraOnlines)
-                .HasForeignKey(d => d.PmoId)
-                .HasConstraintName("FK__PhieuTraO__pmo_I__2CF2ADDF");
+                .HasConstraintName("FK__PhieuTra__pm_Id__52593CB8");
         });
 
         modelBuilder.Entity<Quyen>(entity =>
         {
-            entity.HasKey(e => e.QId).HasName("PK__Quyen__3D56876835679819");
+            entity.HasKey(e => e.QId).HasName("PK__Quyen__3D56876864A6F7EC");
 
             entity.ToTable("Quyen");
 
@@ -585,7 +429,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<Refreshtoken>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Refresht__1788CC4C024E5AA9");
+            entity.HasKey(e => e.UserId).HasName("PK__Refresht__1788CC4C54F3B5C4");
 
             entity.ToTable("Refreshtoken");
 
@@ -596,7 +440,7 @@ public partial class OnlineLibraryContext : DbContext
 
         modelBuilder.Entity<Sach>(entity =>
         {
-            entity.HasKey(e => e.SId).HasName("PK__Sach__2F3DA3DC1BF4F372");
+            entity.HasKey(e => e.SId).HasName("PK__Sach__2F3DA3DC278B4D5E");
 
             entity.ToTable("Sach");
 
@@ -625,32 +469,32 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Ks).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.KsId)
-                .HasConstraintName("FK__Sach__ks_Id__208CD6FA");
+                .HasConstraintName("FK__Sach__ks_Id__5BE2A6F2");
 
             entity.HasOne(d => d.Ls).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.LsId)
-                .HasConstraintName("FK__Sach__ls_Id__1F98B2C1");
+                .HasConstraintName("FK__Sach__ls_Id__5AEE82B9");
 
             entity.HasOne(d => d.Nxb).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.NxbId)
-                .HasConstraintName("FK__Sach__nxb_Id__1DB06A4F");
+                .HasConstraintName("FK__Sach__nxb_Id__59063A47");
 
             entity.HasOne(d => d.Os).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.OsId)
-                .HasConstraintName("FK__Sach__os_Id__2180FB33");
+                .HasConstraintName("FK__Sach__os_Id__5CD6CB2B");
 
             entity.HasOne(d => d.Tg).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.TgId)
-                .HasConstraintName("FK__Sach__tg_Id__1CBC4616");
+                .HasConstraintName("FK__Sach__tg_Id__5812160E");
 
             entity.HasOne(d => d.Tl).WithMany(p => p.Saches)
                 .HasForeignKey(d => d.TlId)
-                .HasConstraintName("FK__Sach__tl_Id__1EA48E88");
+                .HasConstraintName("FK__Sach__tl_Id__59FA5E80");
         });
 
         modelBuilder.Entity<TacGium>(entity =>
         {
-            entity.HasKey(e => e.TgId).HasName("PK__TacGia__006D09FB720D2320");
+            entity.HasKey(e => e.TgId).HasName("PK__TacGia__006D09FB81100C93");
 
             entity.Property(e => e.TgId).HasColumnName("tg_Id");
             entity.Property(e => e.TgTenTacGia)
@@ -658,33 +502,9 @@ public partial class OnlineLibraryContext : DbContext
                 .HasColumnName("tg_TenTacGia");
         });
 
-        modelBuilder.Entity<ThanhToan>(entity =>
-        {
-            entity.HasKey(e => e.TtId).HasName("PK__ThanhToa__1B53DCFE4C64B34A");
-
-            entity.ToTable("ThanhToan");
-
-            entity.Property(e => e.TtId).HasColumnName("tt_Id");
-            entity.Property(e => e.PmoId).HasColumnName("pmo_Id");
-            entity.Property(e => e.TtNgayThanhToan)
-                .HasColumnType("datetime")
-                .HasColumnName("tt_NgayThanhToan");
-            entity.Property(e => e.TtPhuongThuc)
-                .HasMaxLength(50)
-                .HasColumnName("tt_PhuongThuc");
-            entity.Property(e => e.TtSoTien).HasColumnName("tt_SoTien");
-            entity.Property(e => e.TtTrangThai)
-                .HasMaxLength(50)
-                .HasColumnName("tt_TrangThai");
-
-            entity.HasOne(d => d.Pmo).WithMany(p => p.ThanhToans)
-                .HasForeignKey(d => d.PmoId)
-                .HasConstraintName("FK__ThanhToan__pmo_I__2BFE89A6");
-        });
-
         modelBuilder.Entity<TheLoai>(entity =>
         {
-            entity.HasKey(e => e.TlId).HasName("PK__TheLoai__8506AC86E598ED65");
+            entity.HasKey(e => e.TlId).HasName("PK__TheLoai__8506AC8643F2625E");
 
             entity.ToTable("TheLoai");
 
@@ -696,7 +516,22 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.HasOne(d => d.Dm).WithMany(p => p.TheLoais)
                 .HasForeignKey(d => d.DmId)
-                .HasConstraintName("FK__TheLoai__dm_Id__123EB7A3");
+                .HasConstraintName("FK__TheLoai__dm_Id__4CA06362");
+        });
+
+        modelBuilder.Entity<TrangThaiMuon>(entity =>
+        {
+            entity.HasKey(e => e.TtmId).HasName("PK__TrangTha__D9B1BFAFCD54C44F");
+
+            entity.ToTable("TrangThaiMuon");
+
+            entity.Property(e => e.TtmId).HasColumnName("ttm_Id");
+            entity.Property(e => e.TtmMoTa)
+                .HasMaxLength(250)
+                .HasColumnName("ttm_MoTa");
+            entity.Property(e => e.TtmTenTrangThai)
+                .HasMaxLength(150)
+                .HasColumnName("ttm_TenTrangThai");
         });
 
         OnModelCreatingPartial(modelBuilder);

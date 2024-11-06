@@ -204,9 +204,65 @@ namespace Library_API.Controllers
             return new JsonResult(quanLyPhieuMuonOnls);
         }
 
+        [HttpPut]
+        public JsonResult Put(PhieuMuonOnline pmo)
+        {
+            string query = @"
+                            update dbo.PhieuMuonOnline
+                            set pmo_TrangThai = @pmo_TrangThai
+                            where pmo_Id=@pmo_Id
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@pmo_Id", pmo.PmoId);
+                    myCommand.Parameters.AddWithValue("@pmo_TrangThai", pmo.PmoTrangThai);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult("Cập nhật trạng thái phiếu mượn online thành công");
+        }
 
 
-    } }
 
+        [HttpGet("GetCTPMO/{id}")]
+        public JsonResult GetCTPMO(int id)
+        {
 
+            string query = @"
+                            select * from
+                            dbo.ChiTietPhieuMuonOnline
+                            where pmo_Id= @Id
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+    }
+}
 

@@ -9,5 +9,5 @@ public partial class Quyen
 
     public string? QTenQuyen { get; set; }
 
-    public virtual ICollection<NguoiDung>? NguoiDungs { get; set; } = new List<NguoiDung>();
+    public virtual ICollection<NguoiDung> NguoiDungs { get; set; } = new List<NguoiDung>();
 }

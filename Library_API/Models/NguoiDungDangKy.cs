@@ -31,11 +31,11 @@ public partial class NguoiDungDangKy
 
     public string? NddkThoiGianSuDung { get; set; }
 
+    public decimal? NddkSoTien { get; set; }
+
     public string? NddkHinhThucTraPhi { get; set; }
 
     public string? NddkTrangThaiThanhToan { get; set; }
 
     public string? NddkTrangThaiDuyet { get; set; }
-
-    public double? NddkSoTien { get; set; }
 }
