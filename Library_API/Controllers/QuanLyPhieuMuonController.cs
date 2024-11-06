@@ -20,19 +20,22 @@ namespace Library_API.Controllers
             _configuration = configuration;
             _env = env;
         }
+
         [HttpGet]
         public JsonResult Get()
         {
             string query = @"
-        SELECT pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, pm.pm_NgayMuon, pm.pm_HanTra,
-               ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
-               s.s_TenSach,
-               ttm.ttm_TenTrangThai
-        FROM dbo.PhieuMuon pm
-        INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
-        INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
-        INNER JOIN dbo.TrangThaiMuon ttm ON pm.ttm_Id = ttm.ttm_Id
-    ";
+            SELECT pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, pm.pm_NgayMuon, pm.pm_HanTra,
+                   ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
+                   s.s_TenSach,
+                   ttm.ttm_TenTrangThai,
+                   pm.pm_LoaiMuon  -- New column for loan type
+            FROM dbo.PhieuMuon pm
+            INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
+            INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
+            INNER JOIN dbo.TrangThaiMuon ttm ON pm.ttm_Id = ttm.ttm_Id
+            ";
+
 
             List<QuanLyPhieuMuon> quanLyPhieuMuons = new List<QuanLyPhieuMuon>();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
@@ -43,7 +46,6 @@ namespace Library_API.Controllers
                 {
                     myCon.Open();
                     SqlDataReader myReader = myCommand.ExecuteReader();
-
                     while (myReader.Read())
                     {
                         QuanLyPhieuMuon phieuMuon = new QuanLyPhieuMuon
@@ -54,11 +56,13 @@ namespace Library_API.Controllers
                             SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
                             NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
                             HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
-                            TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(), // Lấy tên trạng thái từ bảng TrangThaiMuon
-                            TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString()
+                            TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(),
+                            TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
+                            PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString()  // Assign loan type
                         };
                         quanLyPhieuMuons.Add(phieuMuon);
                     }
+
 
                     myReader.Close();
                 }

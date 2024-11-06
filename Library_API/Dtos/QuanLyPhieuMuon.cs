@@ -19,5 +19,6 @@
 
         public string TrangThaiXetDuyet { get; set; }
 
+        public string? PmLoaiMuon { get; set; }
     }
 }

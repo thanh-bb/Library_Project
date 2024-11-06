@@ -351,8 +351,8 @@ namespace Library_API.Controllers
             {
                 connection.Open();
 
-                // Lấy các phiếu mượn có trạng thái "Chờ nhận sách"
-                string getOrdersQuery = "SELECT pmo_Id, pmo_NgayDat FROM dbo.PhieuMuonOnline WHERE pmo_TrangThai = N'Chờ nhận sách';";
+                // Lấy các phiếu mượn có trạng thái "Đang giữ sách" (ttm_Id = 3)
+                string getOrdersQuery = "SELECT pm_Id, pm_NgayMuon FROM dbo.PhieuMuon WHERE ttm_Id = 3;";
                 var overdueIds = new List<int>();
 
                 using (SqlCommand getOrdersCommand = new SqlCommand(getOrdersQuery, connection))
@@ -361,10 +361,10 @@ namespace Library_API.Controllers
                     while (reader.Read())
                     {
                         int orderId = reader.GetInt32(0);
-                        DateTime orderDate = reader.GetDateTime(1);
+                        DateTime loanDate = reader.GetDateTime(1);
 
-                        // Tính số giờ làm việc giữa ngày đặt và ngày hiện tại
-                        int workingHours = DateHelper.CalculateWorkingHours(orderDate, DateTime.Now);
+                        // Tính số giờ làm việc giữa ngày mượn và thời gian hiện tại
+                        int workingHours = DateHelper.CalculateWorkingHours(loanDate, DateTime.Now);
 
                         if (workingHours > 48)
                         {
@@ -376,7 +376,7 @@ namespace Library_API.Controllers
                 // Cập nhật trạng thái cho các phiếu mượn quá hạn
                 if (overdueIds.Any())
                 {
-                    string updateQuery = "UPDATE dbo.PhieuMuonOnline SET pmo_TrangThai = N'Quá hạn nhận sách' WHERE pmo_Id IN (" + string.Join(",", overdueIds) + ")";
+                    string updateQuery = "UPDATE dbo.PhieuMuon SET ttm_Id = 4 WHERE pm_Id IN (" + string.Join(",", overdueIds) + ")";
                     using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
                     {
                         updateCommand.ExecuteNonQuery();
