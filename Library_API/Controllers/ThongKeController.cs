@@ -67,5 +67,63 @@ namespace Library_API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("ThongKeMuonSachTheoNgay")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetThongKeMuonSachTheoNgay(DateTime startDate, DateTime endDate)
+        {
+            if (startDate > endDate)
+            {
+                return BadRequest("Ngày bắt đầu phải trước ngày kết thúc.");
+            }
+
+            string description = $"Từ {startDate:dd/MM/yyyy} đến {endDate:dd/MM/yyyy}";
+
+            var result = await _context.Saches
+                .Select(s => new SachNoiBat
+                {
+                    SId = s.SId,
+                    STenSach = s.STenSach,
+                    TongSoLanMuon = _context.ChiTietPhieuMuons
+                        .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                            .Any(pm => pm.PmId == ctpm.PmId && pm.PmNgayMuon >= startDate && pm.PmNgayMuon <= endDate))
+                        .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0, // Nếu không có mượn, trả về 0
+                    MoTaThoiGian = description
+                })
+                .Where(s => s.TongSoLanMuon > 0) // Chỉ lấy các sách có dữ liệu mượn
+                .OrderByDescending(s => s.TongSoLanMuon)
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeMuonSach7NgayQua")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetThongKeMuonSach7NgayQua()
+        {
+            // Tính ngày bắt đầu và ngày kết thúc là 7 ngày gần đây
+            DateTime endDate = DateTime.Now;
+            DateTime startDate = endDate.AddDays(-6); // 7 ngày trước tính từ hôm nay
+
+            string description = $"7 ngày qua ({startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy})";
+
+            var result = await _context.Saches
+                .Select(s => new SachNoiBat
+                {
+                    SId = s.SId,
+                    STenSach = s.STenSach,
+                    TongSoLanMuon = _context.ChiTietPhieuMuons
+                        .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                            .Any(pm => pm.PmId == ctpm.PmId && pm.PmNgayMuon >= startDate && pm.PmNgayMuon <= endDate))
+                        .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0, // Nếu không có mượn, trả về 0
+                    MoTaThoiGian = description
+                })
+                .Where(s => s.TongSoLanMuon > 0) // Chỉ lấy các sách có dữ liệu mượn
+                .OrderByDescending(s => s.TongSoLanMuon)
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+
+
     }
 }

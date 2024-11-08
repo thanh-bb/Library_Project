@@ -32,5 +32,9 @@
 
         public int SoLanMuon { get; set; }
 
+        public int TongSoLanMuon { get; set; }
+
+        public string MoTaThoiGian { get; set; }
+
     }
 }
