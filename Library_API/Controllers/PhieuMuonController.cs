@@ -296,13 +296,13 @@ namespace Library_API.Controllers
             int currentYear = DateTime.Now.Year;
 
             string query = @"
-        SELECT COUNT(*) AS NumberOfBorrowReceipts
-        FROM dbo.PhieuMuon
-        WHERE MONTH(pm_NgayMuon) = @Month 
-        AND YEAR(pm_NgayMuon) = @Year
-        AND nd_Id = @UserId 
-        AND pm_TrangThaiXetDuyet = N'Chờ xét duyệt'
-    ";
+    SELECT COUNT(*) AS NumberOfBorrowReceipts
+    FROM dbo.PhieuMuon
+    WHERE MONTH(pm_NgayMuon) = @Month 
+    AND YEAR(pm_NgayMuon) = @Year
+    AND nd_Id = @UserId 
+    AND (pm_TrangThaiXetDuyet = N'Chờ xét duyệt' OR (ttm_Id = 1 OR ttm_Id = 3))
+";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
@@ -326,6 +326,7 @@ namespace Library_API.Controllers
 
             return new JsonResult(numberOfBorrowReceipts);
         }
+
 
     }
 

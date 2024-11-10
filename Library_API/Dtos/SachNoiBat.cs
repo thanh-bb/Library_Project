@@ -36,5 +36,7 @@
 
         public string MoTaThoiGian { get; set; }
 
+        public int Thang { get; set; }
+
     }
 }

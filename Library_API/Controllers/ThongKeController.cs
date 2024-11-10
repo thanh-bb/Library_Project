@@ -124,6 +124,76 @@ namespace Library_API.Controllers
         }
 
 
+        [HttpGet("ThongKeMuonSachTheoThangChiTiet")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetThongKeMuonSachTheoThangChiTiet(int month, int year)
+        {
+            string description = $"Tháng {month}/{year}";
+
+            var result = await _context.Saches
+                .Select(s => new SachNoiBat
+                {
+                    SId = s.SId,
+                    STenSach = s.STenSach,
+                    TongSoLanMuon = _context.ChiTietPhieuMuons
+                        .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                            .Any(pm => pm.PmId == ctpm.PmId &&
+                                       pm.PmNgayMuon.HasValue &&
+                                       pm.PmNgayMuon.Value.Year == year &&
+                                       pm.PmNgayMuon.Value.Month == month))
+                        .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0, // Nếu không có mượn, trả về 0
+                    MoTaThoiGian = description
+                })
+                .Where(s => s.TongSoLanMuon > 0) // Chỉ lấy các sách có dữ liệu mượn
+                .OrderByDescending(s => s.TongSoLanMuon)
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("ThongKeMuonSachTheoQuy")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetThongKeMuonSachTheoQuy(int year)
+        {
+            var result = new List<SachNoiBat>();
+
+            // Tạo các khoảng thời gian cho từng quý
+            var quarters = new List<(DateTime start, DateTime end)>
+    {
+        (new DateTime(year, 1, 1), new DateTime(year, 3, 31)),  // Quý 1
+        (new DateTime(year, 4, 1), new DateTime(year, 6, 30)),  // Quý 2
+        (new DateTime(year, 7, 1), new DateTime(year, 9, 30)),  // Quý 3
+        (new DateTime(year, 10, 1), new DateTime(year, 12, 31)) // Quý 4
+    };
+
+            for (int i = 0; i < quarters.Count; i++)
+            {
+                var (startDate, endDate) = quarters[i];
+                string quarterDescription = $"Quý {i + 1}/{year}";
+
+                var quarterResult = await _context.Saches
+                    .Select(s => new SachNoiBat
+                    {
+                        SId = s.SId,
+                        STenSach = s.STenSach,
+                        TongSoLanMuon = _context.ChiTietPhieuMuons
+                            .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                                .Any(pm => pm.PmId == ctpm.PmId && pm.PmNgayMuon >= startDate && pm.PmNgayMuon <= endDate))
+                            .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0,
+                        MoTaThoiGian = quarterDescription
+                    })
+                    .Where(s => s.TongSoLanMuon > 0)
+                    .OrderByDescending(s => s.TongSoLanMuon)
+                    .ToListAsync();
+
+                result.AddRange(quarterResult);
+            }
+
+            return Ok(result);
+        }
+
+
+
+
 
     }
 }
