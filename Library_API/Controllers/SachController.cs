@@ -316,5 +316,37 @@ namespace Library_API.Controllers
             return new JsonResult("Cập nhật thành công");
         }
 
+
+        [HttpGet("GetSach")]
+        public JsonResult GetSach(string tenSach = "")
+        {
+            string query = @"
+                    SELECT * 
+                    FROM dbo.Sach
+                    WHERE s_TrangThaiMuon = 1 
+                      AND s_ChiDoc = 0 
+                      AND s_TenSach LIKE '%' + @tenSach + '%'";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    // Thêm tham số `@tenSach` để lọc theo từ khóa tìm kiếm
+                    myCommand.Parameters.AddWithValue("@tenSach", tenSach);
+
+                    using (SqlDataReader myReader = myCommand.ExecuteReader())
+                    {
+                        table.Load(myReader);
+                    }
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+
     }
 }

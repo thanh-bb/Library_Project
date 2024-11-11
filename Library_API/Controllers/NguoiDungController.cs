@@ -46,6 +46,8 @@ namespace Library_API.Controllers
 
             return new JsonResult(table);
         }
+
+
         [HttpGet("{id}")]
         public JsonResult Get(int id)
         {
@@ -73,6 +75,7 @@ namespace Library_API.Controllers
 
             return new JsonResult(table);
         }
+
 
         [HttpGet("FindByPmId/{pmId}")]
         public JsonResult FindByPmId(int pmId)
@@ -218,5 +221,46 @@ namespace Library_API.Controllers
             return Ok(true); // Username khả dụng
 
         }
+
+
+        [HttpGet("search-borrower")]
+        public JsonResult SearchBorrower(string? cccd, string? username)
+        {
+            if (string.IsNullOrEmpty(cccd) && string.IsNullOrEmpty(username))
+            {
+                return new JsonResult(new { error = "Vui lòng cung cấp username hoặc CCCD để tìm kiếm." })
+                {
+                    StatusCode = 400
+                };
+            }
+
+            string query = @"
+        SELECT nd_Id, nd_Username, nd_HoTen
+        FROM dbo.NguoiDung
+        WHERE (@username IS NULL OR nd_Username = @username)
+          AND (@cccd IS NULL OR nd_CCCD = @cccd)";
+
+            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("MyConnection")))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@cccd", (object?)cccd ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@username", (object?)username ?? DBNull.Value);
+
+                DataTable resultTable = new DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(resultTable);
+
+                if (resultTable.Rows.Count > 0)
+                {
+                    return new JsonResult(resultTable);
+                }
+                else
+                {
+                    return new JsonResult("Không tìm thấy người mượn");
+                }
+            }
+        }
+
+
     }
 }
