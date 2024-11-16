@@ -20,5 +20,7 @@
         public string TrangThaiXetDuyet { get; set; }
 
         public string? PmLoaiMuon { get; set; }
+
+        public List<ChiTietSach> ChiTiet { get; set; }
     }
 }

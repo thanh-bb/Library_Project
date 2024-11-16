@@ -264,12 +264,12 @@ namespace Library_API.Controllers
         {
             string query = @"
         UPDATE dbo.PhieuMuon
-        SET pm_TrangThaiMuon = 
+        SET ttm_Id = 
             CASE
-                WHEN pm_TrangThaiMuon = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1 THEN 'Quá hạn trả'
-                ELSE pm_TrangThaiMuon
+                WHEN ttm_Id = '1' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1 THEN '2'
+                ELSE ttm_Id
             END
-        WHERE pm_TrangThaiMuon = 'Đang mượn' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1
+        WHERE ttm_Id = '1' AND DATEDIFF(day, GETDATE(), pm_HanTra) = -1
     ";
 
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
@@ -301,7 +301,7 @@ namespace Library_API.Controllers
     WHERE MONTH(pm_NgayMuon) = @Month 
     AND YEAR(pm_NgayMuon) = @Year
     AND nd_Id = @UserId 
-    AND (pm_TrangThaiXetDuyet = N'Chờ xét duyệt' OR (ttm_Id = 1 OR ttm_Id = 3))
+    AND (pm_TrangThaiXetDuyet = N'Chờ xét duyệt' OR (ttm_Id = 1  OR ttm_Id = 2 OR ttm_Id = 3 OR ttm_Id = 4))
 ";
 
             DataTable table = new DataTable();

@@ -72,16 +72,86 @@ namespace Library_API.Controllers
         }
 
 
+        [HttpGet("ListPM")]
+        public JsonResult ListPM()
+        {
+            string query = @"
+        SELECT 
+            pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, 
+            pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, 
+            ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon, 
+            s.s_TenSach, 
+            ttm.ttm_TenTrangThai
+        FROM dbo.PhieuMuon pm
+        INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
+        INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
+        INNER JOIN dbo.TrangThaiMuon ttm ON pm.ttm_Id = ttm.ttm_Id
+    ";
+
+            List<QuanLyPhieuMuon> result = new List<QuanLyPhieuMuon>();
+            Dictionary<int, QuanLyPhieuMuon> groupedData = new Dictionary<int, QuanLyPhieuMuon>();
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCon.Open();
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+
+                    while (myReader.Read())
+                    {
+                        int pmId = Convert.ToInt32(myReader["pm_Id"]);
+
+                        // Kiểm tra nếu phiếu mượn đã được thêm vào dictionary
+                        if (!groupedData.ContainsKey(pmId))
+                        {
+                            groupedData[pmId] = new QuanLyPhieuMuon
+                            {
+                                Id_PhieuMuon = pmId,
+                                Id_User = Convert.ToInt32(myReader["nd_Id"]),
+                                NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
+                                HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
+                                TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(),
+                                TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
+                                PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString(),
+                                ChiTiet = new List<ChiTietSach>() // Khởi tạo danh sách chi tiết sách
+                            };
+                        }
+
+                        // Thêm chi tiết sách vào phiếu mượn tương ứng
+                        groupedData[pmId].ChiTiet.Add(new ChiTietSach
+                        {
+                            Id_Sach = Convert.ToInt32(myReader["s_Id"]),
+                            TenSach = myReader["s_TenSach"].ToString(),
+                            SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"])
+                        });
+                    }
+
+                    myReader.Close();
+                }
+            }
+
+            // Chuyển từ dictionary sang danh sách
+            result = groupedData.Values.ToList();
+
+            return new JsonResult(result);
+        }
+
+
+
 
         [HttpGet("{ndId}")]
         public JsonResult Get(int ndId)
         {
             string query = @"
-    SELECT pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, pm.pm_NgayMuon, pm.pm_HanTra,
-           pm.pm_LoaiMuon, -- Thêm trường pm_LoaiMuon
-           ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon,
-           s.s_TenSach,
-           ttm.ttm_TenTrangThai
+    SELECT 
+        pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, 
+        pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, 
+        ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon, 
+        s.s_TenSach, 
+        ttm.ttm_TenTrangThai
     FROM dbo.PhieuMuon pm
     INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
     INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
@@ -89,7 +159,9 @@ namespace Library_API.Controllers
     WHERE pm.nd_Id = @NdId
     ";
 
-            List<QuanLyPhieuMuon> quanLyPhieuMuons = new List<QuanLyPhieuMuon>();
+            List<QuanLyPhieuMuon> result = new List<QuanLyPhieuMuon>();
+            Dictionary<int, QuanLyPhieuMuon> groupedData = new Dictionary<int, QuanLyPhieuMuon>();
+
             string sqlDataSource = _configuration.GetConnectionString("MyConnection");
 
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
@@ -102,27 +174,41 @@ namespace Library_API.Controllers
 
                     while (myReader.Read())
                     {
-                        QuanLyPhieuMuon phieuMuon = new QuanLyPhieuMuon
+                        int pmId = Convert.ToInt32(myReader["pm_Id"]);
+
+                        // Kiểm tra nếu phiếu mượn đã được thêm vào dictionary
+                        if (!groupedData.ContainsKey(pmId))
                         {
-                            Id_PhieuMuon = Convert.ToInt32(myReader["pm_Id"]),
-                            Id_User = Convert.ToInt32(myReader["nd_Id"]),
+                            groupedData[pmId] = new QuanLyPhieuMuon
+                            {
+                                Id_PhieuMuon = pmId,
+                                Id_User = Convert.ToInt32(myReader["nd_Id"]),
+                                NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
+                                HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
+                                TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(),
+                                TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
+                                PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString(),
+                                ChiTiet = new List<ChiTietSach>() // Khởi tạo danh sách chi tiết sách
+                            };
+                        }
+
+                        // Thêm chi tiết sách vào phiếu mượn tương ứng
+                        groupedData[pmId].ChiTiet.Add(new ChiTietSach
+                        {
                             Id_Sach = Convert.ToInt32(myReader["s_Id"]),
                             TenSach = myReader["s_TenSach"].ToString(),
-                            SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"]),
-                            NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
-                            HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
-                            TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(), // Lấy tên trạng thái từ bảng TrangThaiMuon
-                            TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
-                            PmLoaiMuon = myReader["pm_LoaiMuon"].ToString() // Lấy thông tin pm_LoaiMuon
-                        };
-                        quanLyPhieuMuons.Add(phieuMuon);
+                            SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"])
+                        });
                     }
 
                     myReader.Close();
                 }
             }
 
-            return new JsonResult(quanLyPhieuMuons);
+            // Chuyển từ dictionary sang danh sách
+            result = groupedData.Values.ToList();
+
+            return new JsonResult(result);
         }
 
 
