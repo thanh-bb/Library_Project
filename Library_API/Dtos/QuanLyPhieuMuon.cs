@@ -22,6 +22,8 @@
         public string? PmLoaiMuon { get; set; }
 
         public bool? PmDaXuatPhat { get; set; }
+
+        public DateTime? NgayTra { get; set; }
         public List<ChiTietSach> ChiTiet { get; set; }
 
 

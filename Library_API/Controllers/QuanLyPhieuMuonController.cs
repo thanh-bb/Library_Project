@@ -72,6 +72,75 @@ namespace Library_API.Controllers
         }
 
 
+        //    [HttpGet("ListPM")]
+        //    public JsonResult ListPM()
+        //    {
+        //        string query = @"
+        //    SELECT 
+        //        pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, 
+        //        pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, pm.pm_DaXuatPhat,
+        //        ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon, 
+        //        s.s_TenSach, 
+        //        ttm.ttm_TenTrangThai
+        //    FROM dbo.PhieuMuon pm
+        //    INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
+        //    INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
+        //    INNER JOIN dbo.TrangThaiMuon ttm ON pm.ttm_Id = ttm.ttm_Id
+        //";
+
+        //        List<QuanLyPhieuMuon> result = new List<QuanLyPhieuMuon>();
+        //        Dictionary<int, QuanLyPhieuMuon> groupedData = new Dictionary<int, QuanLyPhieuMuon>();
+
+        //        string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+        //        using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+        //        {
+        //            using (SqlCommand myCommand = new SqlCommand(query, myCon))
+        //            {
+        //                myCon.Open();
+        //                SqlDataReader myReader = myCommand.ExecuteReader();
+
+        //                while (myReader.Read())
+        //                {
+        //                    int pmId = Convert.ToInt32(myReader["pm_Id"]);
+
+        //                    // Kiểm tra nếu phiếu mượn đã được thêm vào dictionary
+        //                    if (!groupedData.ContainsKey(pmId))
+        //                    {
+        //                        groupedData[pmId] = new QuanLyPhieuMuon
+        //                        {
+        //                            Id_PhieuMuon = pmId,
+        //                            Id_User = Convert.ToInt32(myReader["nd_Id"]),
+        //                            NgayMuon = Convert.ToDateTime(myReader["pm_NgayMuon"]),
+        //                            HanTra = Convert.ToDateTime(myReader["pm_HanTra"]),
+        //                            TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(),
+        //                            TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
+        //                            PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString(),
+        //                            PmDaXuatPhat = Convert.ToBoolean(myReader["pm_DaXuatPhat"]),
+        //                            ChiTiet = new List<ChiTietSach>() // Khởi tạo danh sách chi tiết sách
+
+        //                        };
+        //                    }
+
+        //                    // Thêm chi tiết sách vào phiếu mượn tương ứng
+        //                    groupedData[pmId].ChiTiet.Add(new ChiTietSach
+        //                    {
+        //                        Id_Sach = Convert.ToInt32(myReader["s_Id"]),
+        //                        TenSach = myReader["s_TenSach"].ToString(),
+        //                        SoLuongSach = Convert.ToInt32(myReader["ctpm_SoLuongSachMuon"])
+        //                    });
+        //                }
+
+        //                myReader.Close();
+        //            }
+        //        }
+
+        //        // Chuyển từ dictionary sang danh sách
+        //        result = groupedData.Values.ToList();
+
+        //        return new JsonResult(result);
+        //    }
+
         [HttpGet("ListPM")]
         public JsonResult ListPM()
         {
@@ -81,11 +150,13 @@ namespace Library_API.Controllers
             pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, pm.pm_DaXuatPhat,
             ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon, 
             s.s_TenSach, 
-            ttm.ttm_TenTrangThai
+            ttm.ttm_TenTrangThai,
+            pt.pt_NgayTra
         FROM dbo.PhieuMuon pm
         INNER JOIN dbo.ChiTietPhieuMuon ctpm ON pm.pm_Id = ctpm.pm_Id
         INNER JOIN dbo.Sach s ON ctpm.s_Id = s.s_Id
         INNER JOIN dbo.TrangThaiMuon ttm ON pm.ttm_Id = ttm.ttm_Id
+        LEFT JOIN dbo.PhieuTra pt ON pm.pm_Id = pt.pm_Id -- Add join to PhieuTra for return date
     ";
 
             List<QuanLyPhieuMuon> result = new List<QuanLyPhieuMuon>();
@@ -104,7 +175,7 @@ namespace Library_API.Controllers
                     {
                         int pmId = Convert.ToInt32(myReader["pm_Id"]);
 
-                        // Kiểm tra nếu phiếu mượn đã được thêm vào dictionary
+                        // Check if the record already exists in groupedData
                         if (!groupedData.ContainsKey(pmId))
                         {
                             groupedData[pmId] = new QuanLyPhieuMuon
@@ -117,12 +188,12 @@ namespace Library_API.Controllers
                                 TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
                                 PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString(),
                                 PmDaXuatPhat = Convert.ToBoolean(myReader["pm_DaXuatPhat"]),
-                                ChiTiet = new List<ChiTietSach>() // Khởi tạo danh sách chi tiết sách
-
+                                NgayTra = myReader["pt_NgayTra"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(myReader["pt_NgayTra"]), // Handle nullable return date
+                                ChiTiet = new List<ChiTietSach>()
                             };
                         }
 
-                        // Thêm chi tiết sách vào phiếu mượn tương ứng
+                        // Add book details to the existing loan
                         groupedData[pmId].ChiTiet.Add(new ChiTietSach
                         {
                             Id_Sach = Convert.ToInt32(myReader["s_Id"]),
@@ -135,12 +206,11 @@ namespace Library_API.Controllers
                 }
             }
 
-            // Chuyển từ dictionary sang danh sách
+            // Convert dictionary values to list
             result = groupedData.Values.ToList();
 
             return new JsonResult(result);
         }
-
 
 
 
