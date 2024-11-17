@@ -146,7 +146,7 @@ namespace Library_API.Controllers
 				PmId = pm_Id,
 				PdpTongTienPhat = tongTienPhat,
 				PdpNgayDong = ngayHomNay,
-				PdpTrangThaiDong = true // Chưa thanh toán
+				PdpTrangThaiDong = false // Chưa thanh toán
 			};
 
 			// Thêm PhieuDongPhat vào cơ sở dữ liệu
@@ -170,7 +170,22 @@ namespace Library_API.Controllers
 				myCon.Close();
 			}
 
-			string queryy = @"
+			// update PM
+            string updateQuery = "UPDATE dbo.PhieuMuon SET pm_DaXuatPhat = 1 WHERE pm_Id = @pm_Id";
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand cmd = new SqlCommand(updateQuery, myCon))
+                {
+                    cmd.Parameters.AddWithValue("@pm_Id", pm_Id);
+                    cmd.ExecuteNonQuery();
+                }
+                myCon.Close();
+            }
+
+
+            string queryy = @"
         SELECT pdp_Id, pdp_TongTienPhat, pdp_NgayDong, pdp_TrangThaiDong, pm_Id
         FROM dbo.PhieuDongPhat
         WHERE pm_Id = @pm_Id
@@ -238,6 +253,39 @@ namespace Library_API.Controllers
             var pdfStream = await page.PdfDataAsync();
 
             return File(pdfStream, "application/pdf", "Report.pdf");
+        }
+
+
+
+
+        [HttpPut("UpdateTrangThaiThanhToan")]
+        public JsonResult UpdateTrangThaiThanhToan(PhieuDongPhat pdp)
+        {
+            string query = @"
+                            update dbo.PhieuDongPhat
+                            set pdp_TrangThaiDong = @pdp_TrangThaiDong 
+                               WHERE pdp_Id = @pdp_Id;
+                            ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@pdp_Id", pdp.PdpId);
+                    myCommand.Parameters.AddWithValue("@pdp_TrangThaiDong", pdp.PdpTrangThaiDong);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
         }
 
     }

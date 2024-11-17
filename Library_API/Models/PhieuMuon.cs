@@ -19,7 +19,9 @@ public partial class PhieuMuon
 
     public int? TtmId { get; set; }
 
-    public virtual ICollection<ChiTietPhieuMuon> ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
+    public bool? PmDaXuatPhat { get; set; }
+
+    public virtual ICollection<ChiTietPhieuMuon>? ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
 
     public virtual NguoiDung? Nd { get; set; }
 

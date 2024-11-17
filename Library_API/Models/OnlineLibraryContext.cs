@@ -368,6 +368,9 @@ public partial class OnlineLibraryContext : DbContext
 
             entity.Property(e => e.PmId).HasColumnName("pm_Id");
             entity.Property(e => e.NdId).HasColumnName("nd_Id");
+            entity.Property(e => e.PmDaXuatPhat)
+                .HasDefaultValue(false)
+                .HasColumnName("pm_DaXuatPhat");
             entity.Property(e => e.PmHanTra)
                 .HasColumnType("datetime")
                 .HasColumnName("pm_HanTra");

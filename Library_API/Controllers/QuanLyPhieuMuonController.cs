@@ -78,7 +78,7 @@ namespace Library_API.Controllers
             string query = @"
         SELECT 
             pm.pm_Id, pm.nd_Id, pm.ttm_Id, pm.pm_TrangThaiXetDuyet, 
-            pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, 
+            pm.pm_NgayMuon, pm.pm_HanTra, pm.pm_LoaiMuon, pm.pm_DaXuatPhat,
             ctpm.s_Id, ctpm.ctpm_SoLuongSachMuon, 
             s.s_TenSach, 
             ttm.ttm_TenTrangThai
@@ -116,7 +116,9 @@ namespace Library_API.Controllers
                                 TrangThaiMuon = myReader["ttm_TenTrangThai"].ToString(),
                                 TrangThaiXetDuyet = myReader["pm_TrangThaiXetDuyet"].ToString(),
                                 PmLoaiMuon = myReader["pm_LoaiMuon"]?.ToString(),
+                                PmDaXuatPhat = Convert.ToBoolean(myReader["pm_DaXuatPhat"]),
                                 ChiTiet = new List<ChiTietSach>() // Khởi tạo danh sách chi tiết sách
+
                             };
                         }
 
