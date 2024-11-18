@@ -33,13 +33,13 @@ public partial class Sach
 
     public int? OsId { get; set; }
 
-    public virtual ICollection<ChiTietGioHang> ChiTietGioHangs { get; set; } = new List<ChiTietGioHang>();
+    public virtual ICollection<ChiTietGioHang>? ChiTietGioHangs { get; set; } = new List<ChiTietGioHang>();
 
-    public virtual ICollection<ChiTietPhieuMuon> ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
+    public virtual ICollection<ChiTietPhieuMuon>? ChiTietPhieuMuons { get; set; } = new List<ChiTietPhieuMuon>();
 
-    public virtual ICollection<ChiTietPhieuTra> ChiTietPhieuTras { get; set; } = new List<ChiTietPhieuTra>();
+    public virtual ICollection<ChiTietPhieuTra>? ChiTietPhieuTras { get; set; } = new List<ChiTietPhieuTra>();
 
-    public virtual ICollection<HinhMinhHoa> HinhMinhHoas { get; set; } = new List<HinhMinhHoa>();
+    public virtual ICollection<HinhMinhHoa>? HinhMinhHoas { get; set; } = new List<HinhMinhHoa>();
 
     public virtual KeSach? Ks { get; set; }
 

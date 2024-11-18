@@ -148,59 +148,59 @@ namespace Library_API.Controllers
             }
         }
 
-        [HttpPut]
-        public JsonResult Put(Sach s)
-        {
-            string query = @"
-            UPDATE dbo.Sach
-            SET s_TenSach = @s_TenSach,
-                s_SoLuong= @s_SoLuong,
-                s_MoTa=@s_MoTa,
-                s_TrongLuong=@s_TrongLuong,
-                s_NamXuatBan= @s_NamXuatBan,
-                s_ChiDoc=@s_ChiDoc,
-                tg_Id=@tg_Id, 
-                nxb_Id=@nxb_Id, 
-                tl_Id=@tl_Id,
-                ls_Id=@ls_Id, 
-                ks_Id =@ks_Id,
-                os_Id =@os_Id
-                WHERE s_Id = @s_Id
-            ";
+        //[HttpPut]
+        //public JsonResult Put(Sach s)
+        //{
+        //    string query = @"
+        //    UPDATE dbo.Sach
+        //    SET s_TenSach = @s_TenSach,
+        //        s_SoLuong= @s_SoLuong,
+        //        s_MoTa=@s_MoTa,
+        //        s_TrongLuong=@s_TrongLuong,
+        //        s_NamXuatBan= @s_NamXuatBan,
+        //        s_ChiDoc=@s_ChiDoc,
+        //        tg_Id=@tg_Id, 
+        //        nxb_Id=@nxb_Id, 
+        //        tl_Id=@tl_Id,
+        //        ls_Id=@ls_Id, 
+        //        ks_Id =@ks_Id,
+        //        os_Id =@os_Id
+        //        WHERE s_Id = @s_Id
+        //    ";
 
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@s_Id", s.SId);
-                    myCommand.Parameters.AddWithValue("@s_TenSach", s.STenSach);
-                    myCommand.Parameters.AddWithValue("@s_SoLuong", s.SSoLuong);
-                    myCommand.Parameters.AddWithValue("@s_MoTa", s.SMoTa);
-                    myCommand.Parameters.AddWithValue("@s_TrongLuong", s.STrongLuong);
-                    myCommand.Parameters.AddWithValue("@s_NamXuatBan", s.SNamXuatBan);
-                //    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
-                    myCommand.Parameters.AddWithValue("@s_ChiDoc", s.SChiDoc);
-                    myCommand.Parameters.AddWithValue("@tg_Id", s.TgId);
-                    myCommand.Parameters.AddWithValue("@nxb_Id", s.NxbId);
-                    myCommand.Parameters.AddWithValue("@tl_Id", s.TlId);
-                    myCommand.Parameters.AddWithValue("@ls_Id", s.LsId);
-                    myCommand.Parameters.AddWithValue("@ks_Id", s.KsId);
-                    myCommand.Parameters.AddWithValue("@os_Id", s.OsId);
-                    // myCommand.Parameters.AddWithValue("@s_HinhAnh", s.SHinhAnh);
+        //    DataTable table = new DataTable();
+        //    string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+        //    SqlDataReader myReader;
+        //    using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+        //    {
+        //        myCon.Open();
+        //        using (SqlCommand myCommand = new SqlCommand(query, myCon))
+        //        {
+        //            myCommand.Parameters.AddWithValue("@s_Id", s.SId);
+        //            myCommand.Parameters.AddWithValue("@s_TenSach", s.STenSach);
+        //            myCommand.Parameters.AddWithValue("@s_SoLuong", s.SSoLuong);
+        //            myCommand.Parameters.AddWithValue("@s_MoTa", s.SMoTa);
+        //            myCommand.Parameters.AddWithValue("@s_TrongLuong", s.STrongLuong);
+        //            myCommand.Parameters.AddWithValue("@s_NamXuatBan", s.SNamXuatBan);
+        //        //    myCommand.Parameters.AddWithValue("@s_TrangThaiMuon", s.STrangThaiMuon);
+        //            myCommand.Parameters.AddWithValue("@s_ChiDoc", s.SChiDoc);
+        //            myCommand.Parameters.AddWithValue("@tg_Id", s.TgId);
+        //            myCommand.Parameters.AddWithValue("@nxb_Id", s.NxbId);
+        //            myCommand.Parameters.AddWithValue("@tl_Id", s.TlId);
+        //            myCommand.Parameters.AddWithValue("@ls_Id", s.LsId);
+        //            myCommand.Parameters.AddWithValue("@ks_Id", s.KsId);
+        //            myCommand.Parameters.AddWithValue("@os_Id", s.OsId);
+        //            // myCommand.Parameters.AddWithValue("@s_HinhAnh", s.SHinhAnh);
 
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+        //            myReader = myCommand.ExecuteReader();
+        //            table.Load(myReader);
+        //            myReader.Close();
+        //            myCon.Close();
+        //        }
+        //    }
 
-            return new JsonResult("Cập nhật thành công");
-        }
+        //    return new JsonResult("Cập nhật thành công");
+        //}
 
 
         [HttpPut("NhapKho/{id}")]
@@ -347,6 +347,81 @@ namespace Library_API.Controllers
             return new JsonResult(table);
         }
 
+        [HttpPut]
+        public JsonResult Put(Sach s)
+        {
+            string query = @"
+        UPDATE dbo.Sach
+        SET s_TenSach = @s_TenSach,
+            s_SoLuong = @s_SoLuong,
+            s_MoTa = @s_MoTa,
+            s_TrongLuong = @s_TrongLuong,
+            s_NamXuatBan = @s_NamXuatBan,
+            s_ChiDoc = @s_ChiDoc,
+            tg_Id = @tg_Id, 
+            nxb_Id = @nxb_Id, 
+            tl_Id = @tl_Id,
+            ls_Id = @ls_Id, 
+            ks_Id = @ks_Id,
+            os_Id = @os_Id
+        WHERE s_Id = @s_Id";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+
+                // Cập nhật thông tin sách
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@s_Id", s.SId);
+                    myCommand.Parameters.AddWithValue("@s_TenSach", s.STenSach);
+                    myCommand.Parameters.AddWithValue("@s_SoLuong", s.SSoLuong);
+                    myCommand.Parameters.AddWithValue("@s_MoTa", s.SMoTa);
+                    myCommand.Parameters.AddWithValue("@s_TrongLuong", s.STrongLuong);
+                    myCommand.Parameters.AddWithValue("@s_NamXuatBan", s.SNamXuatBan);
+                    myCommand.Parameters.AddWithValue("@s_ChiDoc", s.SChiDoc);
+                    myCommand.Parameters.AddWithValue("@tg_Id", s.TgId);
+                    myCommand.Parameters.AddWithValue("@nxb_Id", s.NxbId);
+                    myCommand.Parameters.AddWithValue("@tl_Id", s.TlId);
+                    myCommand.Parameters.AddWithValue("@ls_Id", s.LsId);
+                    myCommand.Parameters.AddWithValue("@ks_Id", s.KsId);
+                    myCommand.Parameters.AddWithValue("@os_Id", s.OsId);
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+
+                // Cập nhật hoặc thêm mới hình ảnh minh họa
+                foreach (var image in s.HinhMinhHoas)
+                {
+                    string imageQuery = @"
+                IF EXISTS (SELECT 1 FROM dbo.HinhMinhHoa WHERE hmh_Id = @hmh_Id)
+                    UPDATE dbo.HinhMinhHoa
+                    SET hmh_HinhAnhMaHoa = @hmh_HinhAnhMaHoa
+                    WHERE hmh_Id = @hmh_Id
+                ELSE
+                    INSERT INTO dbo.HinhMinhHoa (s_Id, hmh_HinhAnhMaHoa)
+                    VALUES (@s_Id, @hmh_HinhAnhMaHoa)";
+
+                    using (SqlCommand imageCommand = new SqlCommand(imageQuery, myCon))
+                    {
+                        imageCommand.Parameters.AddWithValue("@hmh_Id", image.HmhId == 0 ? (object)DBNull.Value : image.HmhId);
+                        imageCommand.Parameters.AddWithValue("@s_Id", s.SId);
+                        imageCommand.Parameters.AddWithValue("@hmh_HinhAnhMaHoa", image.HmhHinhAnhMaHoa);
+
+                        imageCommand.ExecuteNonQuery();
+                    }
+                }
+
+                myCon.Close();
+            }
+
+            return new JsonResult("Cập nhật thành công");
+        }
 
     }
 }

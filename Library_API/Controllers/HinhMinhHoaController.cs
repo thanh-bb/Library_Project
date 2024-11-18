@@ -154,6 +154,31 @@ namespace Library_API.Controllers
         }
 
 
+        [HttpDelete]
+        [Route("DeleteImage")]
+        public JsonResult DeleteImage(HinhMinhHoa hinh)
+        {
+            string query = @"
+        DELETE FROM dbo.HinhMinhHoa
+        WHERE s_Id = @s_Id AND hmh_Id = @hmh_Id";
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@s_Id", hinh.SId);
+                    myCommand.Parameters.AddWithValue("@hmh_Id", hinh.HmhId);
+
+                    myCommand.ExecuteNonQuery();
+                }
+                myCon.Close();
+            }
+
+            return new JsonResult("Xóa hình ảnh thành công");
+        }
 
 
     }
