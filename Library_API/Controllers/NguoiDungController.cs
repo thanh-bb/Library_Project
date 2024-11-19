@@ -261,6 +261,43 @@ namespace Library_API.Controllers
             }
         }
 
+        [HttpGet("GetViolations/{id}")]
+        public JsonResult GetViolations(int id)
+        {
+            string query = @"
+        SELECT 
+            pm.pm_Id,
+            pm.pm_NgayMuon,
+            pm.pm_HanTra,
+            pt.pt_NgayTra,
+            DATEDIFF(DAY, pm.pm_HanTra, pt.pt_NgayTra) AS SoNgayTre,
+            CASE 
+                WHEN pt.pt_NgayTra > pm.pm_HanTra THEN N'Trả sách quá hạn'
+                ELSE N'Không có vi phạm'
+            END AS LoaiViPham
+        FROM dbo.PhieuMuon pm
+        LEFT JOIN dbo.PhieuTra pt ON pm.pm_Id = pt.pm_Id
+        WHERE pm.nd_Id = @Id AND pt.pt_NgayTra > pm.pm_HanTra";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    SqlDataAdapter adapter = new SqlDataAdapter(myCommand);
+                    adapter.Fill(table);
+                }
+                myCon.Close();
+            }
+
+            return new JsonResult(table);
+        }
+
+
 
     }
 }
