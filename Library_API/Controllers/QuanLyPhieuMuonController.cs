@@ -371,6 +371,45 @@ namespace Library_API.Controllers
             return new JsonResult(result);
         }
 
+        [HttpGet("CheckIfCanBorrow/{nd_Id}")]
+        public JsonResult CheckIfCanBorrow(int nd_Id)
+        {
+            string result = "Có thể mượn sách"; // Mặc định là có thể mượn sách
+
+            // Câu truy vấn kiểm tra các phiếu mượn có trạng thái 'Đang mượn' và có ngày trả đã qua
+            string query = @"
+        SELECT pm.pm_Id, pm.pm_HanTra
+        FROM dbo.PhieuMuon pm
+        WHERE pm.nd_Id = @nd_Id
+        AND pm.ttm_Id = 1";  // Trạng thái 'Đang mượn'
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@nd_Id", nd_Id);
+                    myCon.Open();
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    while (myReader.Read())
+                    {
+                        DateTime hanTra = myReader.GetDateTime(1);
+                        if (hanTra < DateTime.Now) // Kiểm tra nếu ngày trả sách đã qua
+                        {
+                            result = "Không thể mượn thêm sách vì bạn có sách quá hạn chưa trả.";
+                            break; // Nếu có sách quá hạn chưa trả, dừng và trả về thông báo
+                        }
+                    }
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult(result); // Trả về thông báo cho phép mượn hoặc yêu cầu trả sách
+        }
+
+
 
     }
 }

@@ -18,9 +18,9 @@
 
                 <!-- Loại hàng hóa -->
                 <div class="form-group mb-4">
-                    <label for="ordertype" class="fw-bold">Tên sản phẩm</label>
+                    <label for="ordertype" class="fw-bold">Tên dịch vụ</label>
                     <select name="OrderType" id="ordertype" class="form-control" >
-                        <option value="book">Sách/ Tài liệu</option>
+                        <option value="book">Thanh toán phiếu đóng phạt</option>
                     </select>
                 </div>
 
@@ -37,7 +37,7 @@
 
                 <!-- Số tiền (hiển thị định dạng tiền tệ) -->
                 <div class="form-group mb-4">
-                    <label for="Amount" class="fw-bold">Phí vận chuyển</label>
+                    <label for="Amount" class="fw-bold">Phí đóng phạt</label>
                     <input class="form-control" id="Amount" name="Amount" type="text"
                            value="@String.Format("{0:N0}", ViewBag.Amount)"
                            oninput="formatCurrency(this)">

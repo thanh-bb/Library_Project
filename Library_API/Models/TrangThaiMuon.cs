@@ -11,5 +11,5 @@ public partial class TrangThaiMuon
 
     public string? TtmMoTa { get; set; }
 
-    public virtual ICollection<PhieuMuon> PhieuMuons { get; set; } = new List<PhieuMuon>();
+    public virtual ICollection<PhieuMuon>? PhieuMuons { get; set; } = new List<PhieuMuon>();
 }

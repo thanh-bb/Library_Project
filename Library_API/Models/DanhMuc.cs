@@ -9,5 +9,5 @@ public partial class DanhMuc
 
     public string? DmTenDanhMuc { get; set; }
 
-    public virtual ICollection<TheLoai> TheLoais { get; set; } = new List<TheLoai>();
+    public virtual ICollection<TheLoai>? TheLoais { get; set; } = new List<TheLoai>();
 }

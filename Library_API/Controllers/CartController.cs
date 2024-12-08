@@ -261,5 +261,40 @@ namespace Library_API.Controllers
             return new JsonResult("Xóa sách thành công");
         }
 
+        [HttpGet("GetCartItemCount/{nd_id}")]
+        public async Task<IActionResult> GetCartItemCount(int nd_id)
+        {
+            string query = @"
+        SELECT COUNT(*) 
+        FROM ChiTietGioHang ctgh
+        JOIN GioHang gh ON ctgh.gh_Id = gh.gh_Id
+        WHERE gh.nd_Id = @NdId;
+    ";
+
+            string sqlDataSource = _configuration.GetConnectionString("MyConnection");
+            int itemCount = 0;
+
+            try
+            {
+                using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+                {
+                    await myCon.OpenAsync();
+                    using (SqlCommand cmd = new SqlCommand(query, myCon))
+                    {
+                        cmd.Parameters.AddWithValue("@NdId", nd_id);
+                        itemCount = (int)await cmd.ExecuteScalarAsync();  // Đếm số lượng sách trong giỏ
+                    }
+                    await myCon.CloseAsync();
+                }
+
+                return Ok(itemCount);  // Trả về số lượng sách trong giỏ
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Đã xảy ra lỗi", error = ex.Message });
+            }
+        }
+
+
     }
 }

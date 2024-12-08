@@ -37,13 +37,13 @@ public partial class NguoiDung
 
     public int? LndLoaiNguoiDung { get; set; }
 
-    public virtual ICollection<GioHang> GioHangs { get; set; } = new List<GioHang>();
+    public virtual ICollection<GioHang>? GioHangs { get; set; } = new List<GioHang>();
 
     public virtual LoaiNguoiDung? LndLoaiNguoiDungNavigation { get; set; }
 
-    public virtual ICollection<PhieuMuon> PhieuMuons { get; set; } = new List<PhieuMuon>();
+    public virtual ICollection<PhieuMuon>? PhieuMuons { get; set; } = new List<PhieuMuon>();
 
-    public virtual ICollection<PhieuTra> PhieuTras { get; set; } = new List<PhieuTra>();
+    public virtual ICollection<PhieuTra>? PhieuTras { get; set; } = new List<PhieuTra>();
 
     public virtual Quyen? QIdNavigation { get; set; }
 }

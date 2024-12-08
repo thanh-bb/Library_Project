@@ -191,6 +191,61 @@ namespace Library_API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("SachMuonNhieuNhatTheoThang")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetSachMuonNhieuNhatTheoThang(int month, int year)
+        {
+            string description = $"Tháng {month}/{year} - Sách mượn nhiều nhất";
+
+            // Truy vấn các sách và số lần mượn trong tháng
+            var result = await _context.Saches
+                .Select(s => new SachNoiBat
+                {
+                    SId = s.SId,
+                    STenSach = s.STenSach,
+                    TongSoLanMuon = _context.ChiTietPhieuMuons
+                        .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                            .Any(pm => pm.PmId == ctpm.PmId &&
+                                       pm.PmNgayMuon.HasValue &&
+                                       pm.PmNgayMuon.Value.Year == year &&
+                                       pm.PmNgayMuon.Value.Month == month))
+                        .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0,
+                    MoTaThoiGian = description
+                })
+                .Where(s => s.TongSoLanMuon > 0) // Chỉ lấy các sách có dữ liệu mượn
+                .OrderByDescending(s => s.TongSoLanMuon)
+                .Take(1) // Lấy sách mượn nhiều nhất
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        [HttpGet("SachMuonItNhatTheoThang")]
+        public async Task<ActionResult<IEnumerable<SachNoiBat>>> GetSachMuonItNhatTheoThang(int month, int year)
+        {
+            string description = $"Tháng {month}/{year} - Sách mượn ít nhất";
+
+            // Truy vấn các sách và số lần mượn trong tháng
+            var result = await _context.Saches
+                .Select(s => new SachNoiBat
+                {
+                    SId = s.SId,
+                    STenSach = s.STenSach,
+                    TongSoLanMuon = _context.ChiTietPhieuMuons
+                        .Where(ctpm => ctpm.SId == s.SId && _context.PhieuMuons
+                            .Any(pm => pm.PmId == ctpm.PmId &&
+                                       pm.PmNgayMuon.HasValue &&
+                                       pm.PmNgayMuon.Value.Year == year &&
+                                       pm.PmNgayMuon.Value.Month == month))
+                        .Sum(ctpm => (int?)ctpm.CtpmSoLuongSachMuon) ?? 0,
+                    MoTaThoiGian = description
+                })
+                .Where(s => s.TongSoLanMuon > 0) // Chỉ lấy các sách có dữ liệu mượn
+                .OrderBy(s => s.TongSoLanMuon) // Lấy sách mượn ít nhất
+                .Take(1) // Lấy sách mượn ít nhất
+                .ToListAsync();
+
+            return Ok(result);
+        }
 
 
 
