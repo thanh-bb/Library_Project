@@ -181,6 +181,7 @@ namespace Library_API.Controllers
             }
         }
 
+
         // Kiem tra username
 
         [HttpGet("CheckBookAvailability")]
@@ -221,6 +222,7 @@ namespace Library_API.Controllers
 
             return Ok(true); // Book is not in the cart, it's available to be added
         }
+
 
         [HttpDelete()]
         public JsonResult Delete(int gh_Id, int s_Id)
